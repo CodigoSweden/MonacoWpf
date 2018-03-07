@@ -1,0 +1,13 @@
+tools
+obj
+bin
+*metaproj*
+.vs
+.vscode
+node_modules
+dist
+out
+*.js.map
+*.log
+src/boulder.web/ClientApp/**/*.js
+packages/*
