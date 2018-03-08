@@ -1,5 +1,4 @@
 // Create the Editor Instance
-require.config({ paths: { 'vs': 'vs' } });
 require(['vs/editor/editor.main'], function () {
     document.editor = monaco.editor.create(document.getElementById('container'), {
         value: '',

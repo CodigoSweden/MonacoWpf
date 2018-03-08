@@ -99,13 +99,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="ts\komoneditor.ts" />
+    <TypeScriptCompile Include="ts\diff.ts" />
+    <TypeScriptCompile Include="ts\editor.ts" />
     <TypeScriptCompile Include="ts\monaco.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="gulpfile.js" />
+    <Content Include="ts\diff.html" />
+    <Content Include="ts\diff.js" />
     <Content Include="ts\editor.js" />
-    <Content Include="ts\index.html" />
+    <Content Include="ts\editor.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

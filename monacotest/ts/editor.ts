@@ -8,12 +8,11 @@ interface External {
     getHeight(): number;
     getWidth(): number;
 }
-
+declare function require(...args: any[]): any;
 
 // Create the Editor Instance
-require.config({ paths: { 'vs': 'vs' } });
 require(['vs/editor/editor.main'], function () {
-    document.editor = monaco.editor.create(document.getElementById('container'), {
+    document.editor = monaco.editor.create(document.getElementById('container'), {  
         value: '',
         language: 'typescript',
         scrollbar: {
@@ -32,8 +31,6 @@ require(['vs/editor/editor.main'], function () {
     window.onresize = () => {
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
-    
-
 });
 
 

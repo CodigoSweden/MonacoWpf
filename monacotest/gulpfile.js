@@ -13,16 +13,22 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build',['clean'], function () {
-    var index = gulp.src('ts/index.html')
+    var editorHtml = gulp.src('ts/editor.html')
         .pipe(gulp.dest('ts/out'));
 
-    var editor = gulp.src('ts/editor.js')
+    var editorJs = gulp.src('ts/editor.js')
+        .pipe(gulp.dest('ts/out'));
+
+    var diffHtml = gulp.src('ts/diff.html')
+        .pipe(gulp.dest('ts/out'));
+
+    var diffJs = gulp.src('ts/diff.js')
         .pipe(gulp.dest('ts/out'));
 
     var monaco = gulp.src('node_modules/monaco-editor/min/vs/**')
         .pipe(gulp.dest('ts/out/vs'));
-    
-    return merge(index, editor, monaco);
+
+    return merge(editorHtml, editorJs, diffHtml, diffJs, monaco);
 });
 
 gulp.task('zip', ['build'], function () {

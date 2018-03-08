@@ -4,9 +4,7 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5",
-    "outFile": "editor.js"
-
+    "target": "es5"
   },
  
   "compileOnSave" : true,
