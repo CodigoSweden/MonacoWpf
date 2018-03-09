@@ -26,6 +26,9 @@ require(['vs/editor/editor.main'], function () {
         window.external.onValueChanged(document.editor.getValue());
     });
 
+    // reset zoom
+    document.body.style.zoom = "1.0";
+    document.body.style.transform = 'scale(1)';     
     // Handle layout, fill the control and resize
     document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight()});
     window.onresize = () => {
@@ -76,17 +79,15 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
 
 class RestClient {
 
-    PostServer<T1>(name: string, args: string): Promise<KomonResult<T1>> {
-
+    PostServer<T1>(name: string, args: string): Promise<T1> {
+        var body = args;
         var url = `http://localhost:52391/roslyn/${name}`;
-        return new Promise<KomonResult<T1>>((resolve, reject) => {
+        return new Promise<T1>((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));
             xhr.onreadystatechange = function () {
                 if (xhr.readyState > 3 && xhr.status == 200) {
-                    var res = {
-                        Result: xhr.responseText == "" ? null : <T1>JSON.parse(xhr.responseText)
-                    }
+                    var res = xhr.responseText == "" ? null : <T1>JSON.parse(xhr.responseText);
                     resolve(res);
                 }
                 else if (xhr.readyState > 3) {
@@ -102,18 +103,6 @@ class RestClient {
         });
     }
     
-}
-
-
-
-export interface KomonResult<TClass> {
-    Result: TClass | null;
-}
-
-export interface KomonError {
-    Message: string,
-    Status: number
-
 }
 
 

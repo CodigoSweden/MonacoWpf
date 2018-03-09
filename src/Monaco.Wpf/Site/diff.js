@@ -12,8 +12,7 @@ require(['vs/editor/editor.main'], function () {
     });
     // Handle layout, fill the control and resize
     diffEditor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
-    window.onresize = () => {
+    window.onresize = function () {
         diffEditor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
 });
-//# sourceMappingURL=diff.js.map

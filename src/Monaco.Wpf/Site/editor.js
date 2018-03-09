@@ -12,9 +12,12 @@ require(['vs/editor/editor.main'], function () {
     document.editor.onDidChangeModelContent(function () {
         window.external.onValueChanged(document.editor.getValue());
     });
+    // reset zoom
+    document.body.style.zoom = "1.0";
+    document.body.style.transform = 'scale(1)';
     // Handle layout, fill the control and resize
     document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
-    window.onresize = () => {
+    window.onresize = function () {
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
@@ -33,52 +36,42 @@ function editorSetLang(lang) {
     monaco.editor.setModelLanguage(document.editor.getModel(), lang);
 }
 // Csharp language services...
-class CsharpCompletionProvider {
-    provideCompletionItems(model, position, token) {
+var CsharpCompletionProvider = /** @class */ (function () {
+    function CsharpCompletionProvider() {
+    }
+    CsharpCompletionProvider.prototype.provideCompletionItems = function (model, position, token) {
         return [{ label: "test" }];
-    }
-    resolveCompletionItem(item, token) {
+    };
+    CsharpCompletionProvider.prototype.resolveCompletionItem = function (item, token) {
         return { label: "test" };
+    };
+    return CsharpCompletionProvider;
+}());
+var RestClient = /** @class */ (function () {
+    function RestClient() {
     }
-}
-class RestClient {
-    constructor(serviceName, hostUrl = null, errorHandler = null) {
-        this._hostUrl = null;
-        this._serviceName = serviceName;
-        this._hostUrl = hostUrl;
-        this._errorHandler = errorHandler;
-    }
-    PostServer(name, args) {
-        var url = `${this._hostUrl == null ? "/" : this._hostUrl}komonapi/I${this._serviceName}/${name}`;
-        //args.forEach(a => a.Value = JSON.stringify(a.Value));
-        return this.postRest(url, args);
-    }
-    postRest(url, body) {
-        return new Promise((resolve, reject) => {
+    RestClient.prototype.PostServer = function (name, args) {
+        var body = args;
+        var url = "http://localhost:52391/roslyn/" + name;
+        return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));
-            var errorHandler = this._errorHandler;
             xhr.onreadystatechange = function () {
                 if (xhr.readyState > 3 && xhr.status == 200) {
-                    var res = {
-                        Result: xhr.responseText == "" ? null : JSON.parse(xhr.responseText)
-                    };
+                    var res = xhr.responseText == "" ? null : JSON.parse(xhr.responseText);
                     resolve(res);
                 }
                 else if (xhr.readyState > 3) {
-                    let error = {
+                    var error = {
                         Message: xhr.responseText == "" ? "" : JSON.parse(xhr.responseText).Message,
                         Status: xhr.status
                     };
-                    if (errorHandler !== null) {
-                        errorHandler(error);
-                    }
                     reject(error);
                 }
             };
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.send(body);
         });
-    }
-}
-//# sourceMappingURL=editor.js.map
+    };
+    return RestClient;
+}());

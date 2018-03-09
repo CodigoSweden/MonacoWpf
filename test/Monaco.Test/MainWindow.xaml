@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:monacotest"
+        xmlns:monaco="clr-namespace:Monaco.Wpf;assembly=Monaco.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid Background="Black">
@@ -12,8 +12,8 @@
             <RowDefinition Height="auto" />
             
         </Grid.RowDefinitions>
-        <local:KomonEditor x:Name="editor"  />
-        <!--<local:KomonDiffView />-->
+        <monaco:MonacoEditor x:Name="editor"  />
+        <!--<monaco:MonacoDiffEditor />-->
         <Button Grid.Row="1" Name="test" Content="test" Click="test_Click" />
     </Grid>
 </Window>

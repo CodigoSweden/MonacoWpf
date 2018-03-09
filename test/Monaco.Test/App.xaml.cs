@@ -17,16 +17,13 @@ namespace monacotest
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            SetBrowserEmulation();
+            Monaco.Wpf.Helpers.SetBrowserEmulation();
+
+            // var server = new Monaco.Wpf.SimpleHTTPServer("", 52391);
 
             base.OnStartup(e);
         }
-        private void SetBrowserEmulation()
-        {
-            var fbe = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true);
-            var exeName = Assembly.GetEntryAssembly().GetName().Name + ".exe";
-            fbe.SetValue(exeName, 11000, RegistryValueKind.DWord);
-        }
+        
     }
 
 
