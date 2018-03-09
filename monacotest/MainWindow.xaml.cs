@@ -34,7 +34,7 @@ namespace monacotest
 
         private void test_Click(object sender, RoutedEventArgs e)
         {
-            //editor.EditorLanguage = EditorLanguage.Html;
+            editor.EditorLanguage = EditorLanguage.Html;
         }
     }
 
@@ -113,7 +113,7 @@ namespace monacotest
         public KomonEditor()
         {
             var sitePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"MonacoWpf","Site");
-            Site.Unpack(sitePath);
+           // Site.Unpack(sitePath);
             _isInitialized = false;
             _server = new SimpleHTTPServer(sitePath, 52391);
             _browser = new WebBrowser();
@@ -171,24 +171,24 @@ namespace monacotest
         }
 
 
-        static class Site
-        {
-            public static void Unpack(string path)
-            {
-                if (Directory.Exists(path))
-                    Directory.Delete(path, true);
+        //static class Site
+        //{
+        //    public static void Unpack(string path)
+        //    {
+        //        if (Directory.Exists(path))
+        //            Directory.Delete(path, true);
 
-                Directory.CreateDirectory(path);
+        //        Directory.CreateDirectory(path);
 
-                var zipPath = Path.Combine(path, "editor.zip");
-                using (var zipStream = typeof(Site).Assembly.GetManifestResourceStream("monacotest.editor.zip"))
-                using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write))
-                {
-                    zipStream.CopyTo(fs);
-                }
-                ZipFile.ExtractToDirectory(zipPath, path);
-            }
-        }
+        //        var zipPath = Path.Combine(path, "editor.zip");
+        //        using (var zipStream = typeof(Site).Assembly.GetManifestResourceStream("monacotest.editor.zip"))
+        //        using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write))
+        //        {
+        //            zipStream.CopyTo(fs);
+        //        }
+        //        ZipFile.ExtractToDirectory(zipPath, path);
+        //    }
+        //}
 
 
 
@@ -270,9 +270,11 @@ namespace monacotest
         #endregion
     };
             private Thread _serverThread;
-            private string _rootDirectory;
+            //private string _rootDirectory;
             private HttpListener _listener;
             private int _port;
+
+            private Dictionary<string, byte[]> _files;
 
             public int Port
             {
@@ -324,39 +326,42 @@ namespace monacotest
                 Console.WriteLine(filename);
                 filename = filename.Substring(1);
 
-                if (string.IsNullOrEmpty(filename))
-                {
-                    foreach (string indexFile in _indexFiles)
-                    {
-                        if (File.Exists(Path.Combine(_rootDirectory, indexFile)))
-                        {
-                            filename = indexFile;
-                            break;
-                        }
-                    }
-                }
+                //if (string.IsNullOrEmpty(filename))
+                //{
+                //    foreach (string indexFile in _indexFiles)
+                //    {
+                //        if (File.Exists(Path.Combine(_rootDirectory, indexFile)))
+                //        {
+                //            filename = indexFile;
+                //            break;
+                //        }
+                //    }
+                //}
 
-                filename = Path.Combine(_rootDirectory, filename);
+                //filename = Path.Combine(_rootDirectory, filename);
 
-                if (File.Exists(filename))
+                if (_files.ContainsKey(filename))
                 {
                     try
                     {
-                        Stream input = new FileStream(filename, FileMode.Open);
+                        //Stream input = new FileStream(filename, FileMode.Open);
 
                         //Adding permanent http response headers
                         string mime;
                         context.Response.ContentType = _mimeTypeMappings.TryGetValue(Path.GetExtension(filename), out mime) ? mime : "application/octet-stream";
-                        context.Response.ContentLength64 = input.Length;
+                        context.Response.ContentLength64 = _files[filename].Length;
                         context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
                         context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filename).ToString("r"));
+                        //context.Response.AddHeader("Content-Encoding", "gzip");
 
-                        byte[] buffer = new byte[1024 * 16];
-                        int nbytes;
-                        while ((nbytes = input.Read(buffer, 0, buffer.Length)) > 0)
-                            context.Response.OutputStream.Write(buffer, 0, nbytes);
-                        input.Close();
+                        //byte[] buffer = new byte[1024 * 16];
+                        //int nbytes;
+                        //while ((nbytes = input.Read(buffer, 0, buffer.Length)) > 0)
+                        //    context.Response.OutputStream.Write(buffer, 0, nbytes);
+                        //input.Close();
 
+
+                        context.Response.OutputStream.Write(_files[filename], 0, _files[filename].Length);
                         context.Response.StatusCode = (int)HttpStatusCode.OK;
                         context.Response.OutputStream.Flush();
                     }
@@ -376,7 +381,27 @@ namespace monacotest
 
             private void Initialize(string path, int port)
             {
-                this._rootDirectory = path;
+
+                _files = new Dictionary<string, byte[]>();
+                using (var zipStream = typeof(SimpleHTTPServer).Assembly.GetManifestResourceStream("monacotest.editor.zip"))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipStream))
+                    {
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            var name = entry.FullName;
+                            using (var stream = entry.Open())
+                            using (var ms = new MemoryStream())
+                            {
+                                 stream.CopyTo(ms);
+                                var data = ms.ToArray();
+                                _files.Add(name, data);
+                            }
+                            
+                           
+                        }
+                    }
+                }
                 this._port = port;
                 _serverThread = new Thread(this.Listen);
                 _serverThread.Start();
