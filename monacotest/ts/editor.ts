@@ -31,6 +31,8 @@ require(['vs/editor/editor.main'], function () {
     window.onresize = () => {
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
+
+    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
 });
 
 
@@ -50,3 +52,68 @@ function editorSetLang(lang: string) {
         document.editor.getModel(),
         lang);
 }
+
+
+// Csharp language services...
+class CsharpCompletionProvider implements monaco.languages.CompletionItemProvider {
+    
+    triggerCharacters?: string[];
+    provideCompletionItems(
+        model: monaco.editor.IReadOnlyModel,
+        position: monaco.Position,
+        token: monaco.CancellationToken):
+            monaco.languages.CompletionItem[] |
+            monaco.Thenable<monaco.languages.CompletionItem[]> |
+            monaco.languages.CompletionList |
+        monaco.Thenable<monaco.languages.CompletionList> {
+        return [{ label: "test" }] as monaco.languages.CompletionItem[];
+    }
+    resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
+        return { label: "test" } as monaco.languages.CompletionItem;
+    }
+
+}
+
+class RestClient {
+
+    PostServer<T1>(name: string, args: string): Promise<KomonResult<T1>> {
+
+        var url = `http://localhost:52391/roslyn/${name}`;
+        return new Promise<KomonResult<T1>>((resolve, reject) => {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', encodeURI(url));
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState > 3 && xhr.status == 200) {
+                    var res = {
+                        Result: xhr.responseText == "" ? null : <T1>JSON.parse(xhr.responseText)
+                    }
+                    resolve(res);
+                }
+                else if (xhr.readyState > 3) {
+                    let error = {
+                        Message: xhr.responseText == "" ? "" : JSON.parse(xhr.responseText).Message as string,
+                        Status: xhr.status
+                    };
+                    reject(error);
+                }
+            };
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.send(body);
+        });
+    }
+    
+}
+
+
+
+export interface KomonResult<TClass> {
+    Result: TClass | null;
+}
+
+export interface KomonError {
+    Message: string,
+    Status: number
+
+}
+
+

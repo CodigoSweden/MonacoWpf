@@ -110,6 +110,7 @@
     <Content Include="ts\editor.js" />
     <Content Include="ts\editor.html" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>gulp
