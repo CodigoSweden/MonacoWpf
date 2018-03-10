@@ -178,19 +178,25 @@ namespace Monaco.Wpf
                 var lineNumber = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["lineNumber"]);
                 var column = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["column"]);
 
-                //var position = value.Lines.GetPosition(new LinePosition(request.Line, request.Column));
-                //var service = CompletionService.GetService(document);
-                //var completionList = await service.GetCompletionsAsync(document, position);
+                var _ = typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions);
 
                 var st = Microsoft.CodeAnalysis.Text.SourceText.From(value);
-                var syntaxTree = CSharpSyntaxTree.ParseText(st);
-                var compilation = CSharpCompilation.Create("foo")
-                    .AddReferences(MetadataReference.CreateFromFile(typeof(DateTime).GetTypeInfo().Assembly.Location))
-                    .AddSyntaxTrees(syntaxTree);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-
                 var position = st.Lines.GetPosition(new Microsoft.CodeAnalysis.Text.LinePosition(lineNumber-1, column-1));
-                var names = semanticModel.LookupSymbols(position).Select(x => new { label = x.Name }).ToList();
+                var ws = new AdhocWorkspace();
+                var proj = ws.AddProject("temp", LanguageNames.CSharp)
+                    .AddMetadataReference(MetadataReference.CreateFromFile(typeof(DateTime).GetTypeInfo().Assembly.Location));
+                var doc = proj.AddDocument("f", st);
+                
+                var service = Microsoft.CodeAnalysis.Completion.CompletionService.GetService(doc);
+                var completionList = service.GetCompletionsAsync(doc, position).Result;
+
+                var names = (completionList?.Items == null 
+                                ? Enumerable.Empty<Microsoft.CodeAnalysis.Completion.CompletionItem>()
+                                : completionList.Items)
+                            .Select(x => new { label = x.DisplayText }).ToList();
+
+
+
 
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
                 var data = Encoding.UTF8.GetBytes(json);
