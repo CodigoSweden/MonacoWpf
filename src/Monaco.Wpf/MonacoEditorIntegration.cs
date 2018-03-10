@@ -21,15 +21,15 @@ namespace Monaco.Wpf
         public MonacoIntegration(WebBrowser browser, Action<string> onValueChanged)
         {
             _onValueChanged = onValueChanged;
-            _browser = browser;
+            _browser = browser;  
         }
-        // Calls from browser
+        // Calls from browser  
         public void onValueChanged(string value) => _onValueChanged(value);
-        public int getWidth()
+        public int getWidth()    
         {
-            return (int)_browser.ActualWidth - 50;
+            return (int)_browser.ActualWidth-25; 
         } 
-        public int getHeight() => (int)_browser.ActualHeight - 50;  
+        public int getHeight() => (int)_browser.ActualHeight-45;  
 
         // Calls to browser
         public string getLanguage() => _browser.InvokeScript("editorGetLang") as string;

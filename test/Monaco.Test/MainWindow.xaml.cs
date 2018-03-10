@@ -31,27 +31,18 @@ namespace monacotest
         {
             InitializeComponent();
 
-//            editor.EditorLanguage = EditorLanguage.CSharp;
-//            editor.Value = @"
-//public class Program
-//{
-//    public static void Main()
-//    {
-//        System.Console.WriteLine(""Hello World!"");
-//    }
-//}
-//";
-
-        }
-
-        private void test_Click(object sender, RoutedEventArgs e)
-        {
-            //editor.EditorLanguage = EditorLanguage.Html;
-        }
+            editor.EditorLanguage = EditorLanguage.CSharp;
+            editor.Value = @"
+public class Program
+{
+    public static void Main()
+    {
+        System.Console.WriteLine(""Hello World!"");
     }
+}
+";
 
-   
-
-    
-
+        }
+        
+    }
 }

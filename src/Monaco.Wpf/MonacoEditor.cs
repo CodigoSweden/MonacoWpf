@@ -36,7 +36,7 @@ namespace Monaco.Wpf
                 {
                     var l = EditorLanguage;
                     var lang = EditorLanguage.ToString().ToLower();
-                    //_browser.InvokeScript("editorSetLang", lang);
+                    _browser.InvokeScript("editorSetLang", lang);
                 }
             
         }
@@ -61,10 +61,10 @@ namespace Monaco.Wpf
             });
         public void UpdateValue()
         {
-            //if (_isInitialized && _monaco.getValue() != Value)
-            //{
-            //     _monaco.setValue(Value);
-            //}
+            if (_isInitialized && _monaco.getValue() != Value)
+            {
+                _monaco.setValue(Value);
+            }
         }
 
 
@@ -80,8 +80,9 @@ namespace Monaco.Wpf
             _isInitialized = false;
             _server = new SimpleHTTPServer(sitePath, 52391);
             _browser = new WebBrowser();
+            
             Content = _browser;
-            _monaco = new MonacoIntegration(
+            _monaco = new MonacoIntegration(  
                 browser: _browser,
                 onValueChanged: value => Value = value
                 );

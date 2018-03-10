@@ -39,10 +39,13 @@ gulp.task('build',['compile'], function () {
     var diffJs = gulp.src('Site/diff.js')
         .pipe(gulp.dest('Site/out'));
 
+    var es6promise = gulp.src('node_modules/es6-promise/dist/es6-promise.auto.min.js')
+        .pipe(gulp.dest('Site/out'));
+
     var monaco = gulp.src('node_modules/monaco-editor/min/vs/**')
         .pipe(gulp.dest('Site/out/vs'));
 
-    return merge(editorHtml, editorJs, diffHtml, diffJs, monaco);
+    return merge(editorHtml, editorJs, diffHtml, diffJs, es6promise, monaco);
 });
 
 gulp.task('zip', ['build'], function () {

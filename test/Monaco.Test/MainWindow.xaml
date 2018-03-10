@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:monaco="clr-namespace:Monaco.Wpf;assembly=Monaco.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="550" Width="725">
     <Grid Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -14,6 +14,5 @@
         </Grid.RowDefinitions>
         <monaco:MonacoEditor x:Name="editor"  />
         <!--<monaco:MonacoDiffEditor />-->
-        <Button Grid.Row="1" Name="test" Content="test" Click="test_Click" />
     </Grid>
 </Window>

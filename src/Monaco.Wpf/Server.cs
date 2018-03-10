@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -157,9 +161,46 @@ namespace Monaco.Wpf
 
             //filename = Path.Combine(_rootDirectory, filename);
 
-            if (_files.ContainsKey(filename))
+            if(filename.StartsWith("roslyn"))
             {
-                try
+
+                var ms = new MemoryStream();
+                var s = context.Request.InputStream;
+                int b;
+                while( (b = s.ReadByte()) >=0)
+                {
+                    ms.WriteByte((byte)b);
+                }
+                var id = ms.ToArray();
+                var ij = Encoding.Default.GetString(id);
+                var args = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(ij);
+                var value = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(args["value"]);
+                var lineNumber = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["lineNumber"]);
+                var column = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["column"]);
+
+                //var position = value.Lines.GetPosition(new LinePosition(request.Line, request.Column));
+                //var service = CompletionService.GetService(document);
+                //var completionList = await service.GetCompletionsAsync(document, position);
+
+                var st = Microsoft.CodeAnalysis.Text.SourceText.From(value);
+                var syntaxTree = CSharpSyntaxTree.ParseText(st);
+                var compilation = CSharpCompilation.Create("foo")
+                    .AddReferences(MetadataReference.CreateFromFile(typeof(DateTime).GetTypeInfo().Assembly.Location))
+                    .AddSyntaxTrees(syntaxTree);
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+
+                var position = st.Lines.GetPosition(new Microsoft.CodeAnalysis.Text.LinePosition(lineNumber-1, column-1));
+                var names = semanticModel.LookupSymbols(position).Select(x => new { label = x.Name }).ToList();
+
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
+                var data = Encoding.UTF8.GetBytes(json);
+                context.Response.OutputStream.Write(data, 0, data.Length);
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.OutputStream.Flush();
+            }
+            else if (_files.ContainsKey(filename)) 
+            {
+                try  
                 {
                     //Stream input = new FileStream(filename, FileMode.Open);
 
@@ -193,7 +234,7 @@ namespace Monaco.Wpf
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
 
-            context.Response.OutputStream.Close();
+            context.Response.OutputStream.Close();   
         }
 
         private void Initialize(string path, int port)

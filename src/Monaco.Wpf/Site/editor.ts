@@ -12,26 +12,29 @@ declare function require(...args: any[]): any;
 
 // Create the Editor Instance
 require(['vs/editor/editor.main'], function () {
+
+    var div = document.getElementById('container');
+    div.style.width = window.external.getWidth().toString() + 'px';
+    div.style.height = window.external.getHeight().toString() + 'px';
+
     document.editor = monaco.editor.create(document.getElementById('container'), {  
         value: '',
         language: 'typescript',
-        scrollbar: {
-            horizontal: 'hidden',
-            vertical: 'hidden'
-        }
+        
+        
     });
 
     // Bind content
     document.editor.onDidChangeModelContent(function () {
         window.external.onValueChanged(document.editor.getValue());
     });
-
-    // reset zoom
-    document.body.style.zoom = "1.0";
-    document.body.style.transform = 'scale(1)';     
+   
     // Handle layout, fill the control and resize
-    document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight()});
+    document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     window.onresize = () => {
+        var div = document.getElementById('container');
+        div.style.width = window.external.getWidth().toString() + 'px';
+        div.style.height = window.external.getHeight().toString() + 'px';
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
 
@@ -60,7 +63,7 @@ function editorSetLang(lang: string) {
 // Csharp language services...
 class CsharpCompletionProvider implements monaco.languages.CompletionItemProvider {
     
-    triggerCharacters?: string[];
+    //triggerCharacters?: string[];
     provideCompletionItems(
         model: monaco.editor.IReadOnlyModel,
         position: monaco.Position,
@@ -69,18 +72,30 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
             monaco.Thenable<monaco.languages.CompletionItem[]> |
             monaco.languages.CompletionList |
         monaco.Thenable<monaco.languages.CompletionList> {
-        return [{ label: "test" }] as monaco.languages.CompletionItem[];
+        //return [{ label: "test" }] as monaco.languages.CompletionItem[];
+
+        return RestClient.ProvideCompletionItems(model,position);
+  
     }
-    resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
-        return { label: "test" } as monaco.languages.CompletionItem;
-    }
+    //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
+    //    return { label: "test" } as monaco.languages.CompletionItem;
+    //}
 
 }
 
 class RestClient {
 
-    PostServer<T1>(name: string, args: string): Promise<T1> {
-        var body = args;
+
+    public static ProvideCompletionItems(model: monaco.editor.IReadOnlyModel,position: monaco.Position): Promise<monaco.languages.CompletionItem[]> {
+        var args = {} as any;
+        args["value"] = JSON.stringify(model.getValue());
+        args["lineNumber"] = JSON.stringify(position.lineNumber);
+        args["column"] = JSON.stringify(position.column);
+        return RestClient.PostServer<monaco.languages.CompletionItem[]>("ProvideCompletionItems", JSON.stringify(args));
+    }
+
+    static PostServer<T1>(name: string, args: string): Promise<T1> {
+       
         var url = `http://localhost:52391/roslyn/${name}`;
         return new Promise<T1>((resolve, reject) => {
             var xhr = new XMLHttpRequest();
@@ -99,7 +114,7 @@ class RestClient {
                 }
             };
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.send(body);
+            xhr.send(args);
         });
     }
     

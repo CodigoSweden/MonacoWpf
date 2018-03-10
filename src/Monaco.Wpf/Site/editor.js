@@ -1,23 +1,22 @@
 // Create the Editor Instance
 require(['vs/editor/editor.main'], function () {
+    var div = document.getElementById('container');
+    div.style.width = window.external.getWidth().toString() + 'px';
+    div.style.height = window.external.getHeight().toString() + 'px';
     document.editor = monaco.editor.create(document.getElementById('container'), {
         value: '',
         language: 'typescript',
-        scrollbar: {
-            horizontal: 'hidden',
-            vertical: 'hidden'
-        }
     });
     // Bind content
     document.editor.onDidChangeModelContent(function () {
         window.external.onValueChanged(document.editor.getValue());
     });
-    // reset zoom
-    document.body.style.zoom = "1.0";
-    document.body.style.transform = 'scale(1)';
     // Handle layout, fill the control and resize
     document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     window.onresize = function () {
+        var div = document.getElementById('container');
+        div.style.width = window.external.getWidth().toString() + 'px';
+        div.style.height = window.external.getHeight().toString() + 'px';
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
@@ -39,19 +38,24 @@ function editorSetLang(lang) {
 var CsharpCompletionProvider = /** @class */ (function () {
     function CsharpCompletionProvider() {
     }
+    //triggerCharacters?: string[];
     CsharpCompletionProvider.prototype.provideCompletionItems = function (model, position, token) {
-        return [{ label: "test" }];
-    };
-    CsharpCompletionProvider.prototype.resolveCompletionItem = function (item, token) {
-        return { label: "test" };
+        //return [{ label: "test" }] as monaco.languages.CompletionItem[];
+        return RestClient.ProvideCompletionItems(model, position);
     };
     return CsharpCompletionProvider;
 }());
 var RestClient = /** @class */ (function () {
     function RestClient() {
     }
-    RestClient.prototype.PostServer = function (name, args) {
-        var body = args;
+    RestClient.ProvideCompletionItems = function (model, position) {
+        var args = {};
+        args["value"] = JSON.stringify(model.getValue());
+        args["lineNumber"] = JSON.stringify(position.lineNumber);
+        args["column"] = JSON.stringify(position.column);
+        return RestClient.PostServer("ProvideCompletionItems", JSON.stringify(args));
+    };
+    RestClient.PostServer = function (name, args) {
         var url = "http://localhost:52391/roslyn/" + name;
         return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
@@ -70,7 +74,7 @@ var RestClient = /** @class */ (function () {
                 }
             };
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.send(body);
+            xhr.send(args);
         });
     };
     return RestClient;
