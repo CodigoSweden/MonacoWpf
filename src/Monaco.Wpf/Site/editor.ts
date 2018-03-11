@@ -63,7 +63,7 @@ function editorSetLang(lang: string) {
 // Csharp language services...
 class CsharpCompletionProvider implements monaco.languages.CompletionItemProvider {
     
-    //triggerCharacters?: string[];
+    triggerCharacters?: string[] = [' ', '.'];
     provideCompletionItems(
         model: monaco.editor.IReadOnlyModel,
         position: monaco.Position,

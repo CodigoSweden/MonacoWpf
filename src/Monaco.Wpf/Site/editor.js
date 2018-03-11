@@ -37,8 +37,11 @@ function editorSetLang(lang) {
 // Csharp language services...
 var CsharpCompletionProvider = /** @class */ (function () {
     function CsharpCompletionProvider() {
+        this.triggerCharacters = [' ', '.'];
+        //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
+        //    return { label: "test" } as monaco.languages.CompletionItem;
+        //}
     }
-    //triggerCharacters?: string[];
     CsharpCompletionProvider.prototype.provideCompletionItems = function (model, position, token) {
         //return [{ label: "test" }] as monaco.languages.CompletionItem[];
         return RestClient.ProvideCompletionItems(model, position);
