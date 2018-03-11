@@ -39,6 +39,15 @@ require(['vs/editor/editor.main'], function () {
     };
 
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
+    // monaco.languages.registerDocumentFormattingEditProvider
+    // monaco.languages.registerDocumentHighlightProvider
+    // monaco.languages.registerDocumentSymbolProvider
+    // monaco.languages.registerHoverProvider
+    // monaco.languages.registerOnTypeFormattingEditProvider
+    // monaco.languages.registerSignatureHelpProvider
+    
+    // diagnostics
+    // monaco.editor.setModelMarkers
 });
 
 
