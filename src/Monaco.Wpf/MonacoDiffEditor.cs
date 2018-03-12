@@ -15,14 +15,15 @@ namespace Monaco.Wpf
 
         WebBrowser _browser;
         MonacoIntegration _monaco;
-        SimpleHTTPServer _server;
+        EmbeddedHttpServer _server;
         bool _isInitialized;
 
         public MonacoDiffEditor()
         {
+            EmbeddedHttpServer.EnsureStarted();
+
             var sitePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MonacoWpf", "Site");
             _isInitialized = false;
-            _server = new SimpleHTTPServer(sitePath, 52391);
             _browser = new WebBrowser();
             Content = _browser;
             _monaco = new MonacoIntegration(
@@ -36,7 +37,7 @@ namespace Monaco.Wpf
                 _isInitialized = true;
 
             };
-            _browser.Navigate(@"http://localhost:52391/diff.html");
+            _browser.Navigate(EmbeddedHttpServer.DiffUri);
 
 
             

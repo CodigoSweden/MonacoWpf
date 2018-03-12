@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{86BFAADC-1
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monaco.Wpf.CSharp", "src\Monaco.Wpf.CSharp\Monaco.Wpf.CSharp.csproj", "{C33CB887-F711-4494-BAD3-977EA057ED86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4D0030E5-4B95-40B2-A5A5-A88809C1E31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D0030E5-4B95-40B2-A5A5-A88809C1E31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D0030E5-4B95-40B2-A5A5-A88809C1E31A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C33CB887-F711-4494-BAD3-977EA057ED86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C33CB887-F711-4494-BAD3-977EA057ED86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C33CB887-F711-4494-BAD3-977EA057ED86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C33CB887-F711-4494-BAD3-977EA057ED86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

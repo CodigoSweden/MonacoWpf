@@ -31,6 +31,8 @@ namespace monacotest
         {
             InitializeComponent();
 
+            editor.AddCSharpLanguageService();
+
             editor.EditorLanguage = EditorLanguage.CSharp;
             editor.Value = @"
 public class Program

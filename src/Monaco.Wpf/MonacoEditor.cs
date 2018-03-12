@@ -71,14 +71,15 @@ namespace Monaco.Wpf
 
         WebBrowser _browser;
         MonacoIntegration _monaco;
-        SimpleHTTPServer _server;
+        
         bool _isInitialized;
 
         public MonacoEditor()
         {
+            EmbeddedHttpServer.EnsureStarted();
+
             var sitePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MonacoWpf", "Site");
             _isInitialized = false;
-            _server = new SimpleHTTPServer(sitePath, 52391);
             _browser = new WebBrowser();
             
             Content = _browser;
@@ -95,7 +96,7 @@ namespace Monaco.Wpf
                 UpdateValue();
 
             };
-            _browser.Navigate(@"http://localhost:52391/editor.html");
+            _browser.Navigate(EmbeddedHttpServer.EditorUri);
 
 
             //EditorLanguage =  _monaco.getLanguage();

@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Monaco.Wpf.CSharp\Monaco.Wpf.CSharp.csproj">
+      <Project>{c33cb887-f711-4494-bad3-977ea057ed86}</Project>
+      <Name>Monaco.Wpf.CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Monaco.Wpf\Monaco.Wpf.csproj">
       <Project>{9725db78-6939-4430-8276-26636374b1b5}</Project>
       <Name>Monaco.Wpf</Name>

@@ -13,7 +13,7 @@ require(['vs/editor/editor.main'], function () {
     });
     // Handle layout, fill the control and resize
     document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
-    window.onresize = () => {
+    window.onresize = function () {
         var div = document.getElementById('container');
         div.style.width = window.external.getWidth().toString() + 'px';
         div.style.height = window.external.getHeight().toString() + 'px';
@@ -43,29 +43,32 @@ function editorSetLang(lang) {
     monaco.editor.setModelLanguage(document.editor.getModel(), lang);
 }
 // Csharp language services...
-class CsharpCompletionProvider {
-    constructor() {
+var CsharpCompletionProvider = /** @class */ (function () {
+    function CsharpCompletionProvider() {
         this.triggerCharacters = [' ', '.'];
         //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
         //    return { label: "test" } as monaco.languages.CompletionItem;
         //}
     }
-    provideCompletionItems(model, position, token) {
+    CsharpCompletionProvider.prototype.provideCompletionItems = function (model, position, token) {
         //return [{ label: "test" }] as monaco.languages.CompletionItem[];
         return RestClient.ProvideCompletionItems(model, position);
+    };
+    return CsharpCompletionProvider;
+}());
+var RestClient = /** @class */ (function () {
+    function RestClient() {
     }
-}
-class RestClient {
-    static ProvideCompletionItems(model, position) {
+    RestClient.ProvideCompletionItems = function (model, position) {
         var args = {};
         args["value"] = JSON.stringify(model.getValue());
         args["lineNumber"] = JSON.stringify(position.lineNumber);
         args["column"] = JSON.stringify(position.column);
         return RestClient.PostServer("ProvideCompletionItems", JSON.stringify(args));
-    }
-    static PostServer(name, args) {
-        var url = `http://localhost:52391/roslyn/${name}`;
-        return new Promise((resolve, reject) => {
+    };
+    RestClient.PostServer = function (name, args) {
+        var url = "http://localhost:52391/roslyn/" + name;
+        return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));
             xhr.onreadystatechange = function () {
@@ -74,7 +77,7 @@ class RestClient {
                     resolve(res);
                 }
                 else if (xhr.readyState > 3) {
-                    let error = {
+                    var error = {
                         Message: xhr.responseText == "" ? "" : JSON.parse(xhr.responseText).Message,
                         Status: xhr.status
                     };
@@ -84,6 +87,6 @@ class RestClient {
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.send(args);
         });
-    }
-}
-//# sourceMappingURL=editor.js.map
+    };
+    return RestClient;
+}());
