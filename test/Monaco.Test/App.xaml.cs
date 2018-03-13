@@ -18,9 +18,6 @@ namespace monacotest
         protected override void OnStartup(StartupEventArgs e)
         {
             Monaco.Wpf.Helpers.SetBrowserEmulation();
-
-            // var server = new Monaco.Wpf.SimpleHTTPServer("", 52391);
-
             base.OnStartup(e);
         }
         

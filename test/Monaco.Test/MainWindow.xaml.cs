@@ -19,6 +19,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO.Compression;
 using Monaco.Wpf;
+using Monaco.Wpf.CSharp;
+using Microsoft.CodeAnalysis;
+using System.Reflection;
 
 namespace monacotest
 {
@@ -31,17 +34,32 @@ namespace monacotest
         {
             InitializeComponent();
 
-            editor.AddCSharpLanguageService();
+            var ctx = new CSharpContext(
+                new List<Argument>
+                {
+                   new Argument { Name = "seq", Type="List<string>", Description="" }
+                },
+                new Argument { Name = "", Type = "bool", Description="" },
+                "",
+                new List<string> { "System","System.Linq", "System.Collections.Generic" },
+                new List<MetadataReference>
+                {
+                     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.Linq.Expressions.ExpressionType).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(Dictionary<,>).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(ValueTuple<,>).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
+
+                }
+                );
+
+            editor.AddCSharpLanguageService(ctx);
 
             editor.EditorLanguage = EditorLanguage.CSharp;
             editor.Value = @"
-public class Program
-{
-    public static void Main()
-    {
-        System.Console.WriteLine(""Hello World!"");
-    }
-}
+return true;
 ";
 
         }
