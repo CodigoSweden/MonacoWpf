@@ -5,6 +5,9 @@ interface  Document {
 
 interface External {
     onValueChanged(value: string): void;
+    onInitDone(): void;
+    getInitialValue(): string;
+    getInitialLang(): string;
     getHeight(): number;
     getWidth(): number;
 }
@@ -17,12 +20,7 @@ require(['vs/editor/editor.main'], function () {
     div.style.width = window.external.getWidth().toString() + 'px';
     div.style.height = window.external.getHeight().toString() + 'px';
 
-    document.editor = monaco.editor.create(document.getElementById('container'), {  
-        value: '',
-        language: 'typescript',
-        
-        
-    });
+    document.editor = monaco.editor.create(document.getElementById('container'), { value: window.external.getInitialValue(), language: window.external.getInitialLang() });
 
     // Bind content
     document.editor.onDidChangeModelContent(function () {
@@ -38,16 +36,8 @@ require(['vs/editor/editor.main'], function () {
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
 
-    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
-    // monaco.languages.registerDocumentFormattingEditProvider
-    // monaco.languages.registerDocumentHighlightProvider
-    // monaco.languages.registerDocumentSymbolProvider
-    // monaco.languages.registerHoverProvider
-    // monaco.languages.registerOnTypeFormattingEditProvider
-    // monaco.languages.registerSignatureHelpProvider
+    window.external.onInitDone();
     
-    // diagnostics
-    // monaco.editor.setModelMarkers
 });
 
 
@@ -59,13 +49,25 @@ function editorGetValue() {
 function editorSetValue(value: string) {
     document.editor.setValue(value);
 }
-function editorGetLang() {
-    return "";
+function editorGetLanguages() : string {
+    return JSON.stringify( monaco.languages.getLanguages());
 }
 function editorSetLang(lang: string) {
     monaco.editor.setModelLanguage(
         document.editor.getModel(),
         lang);
+}
+function registerCSharpsServices(id: string) {
+    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
+    // monaco.languages.registerDocumentFormattingEditProvider
+    // monaco.languages.registerDocumentHighlightProvider
+    // monaco.languages.registerDocumentSymbolProvider
+    // monaco.languages.registerHoverProvider
+    // monaco.languages.registerOnTypeFormattingEditProvider
+    // monaco.languages.registerSignatureHelpProvider
+
+    // diagnostics
+    // monaco.editor.setModelMarkers
 }
 
 
@@ -105,7 +107,7 @@ class RestClient {
 
     static PostServer<T1>(name: string, args: string): Promise<T1> {
        
-        var url = `http://localhost:52391/roslyn/${name}`;
+        var url = `./roslyn/${name}`;
         return new Promise<T1>((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));

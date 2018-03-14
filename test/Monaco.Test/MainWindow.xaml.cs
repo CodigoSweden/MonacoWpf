@@ -22,6 +22,7 @@ using Monaco.Wpf;
 using Monaco.Wpf.CSharp;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace monacotest
 {
@@ -34,14 +35,17 @@ namespace monacotest
         {
             InitializeComponent();
 
-            var ctx = new CSharpContext(
+            
+            editor.OnEditorInitialized += (o, e) =>
+            {
+                var ctx = new CSharpContext(
                 new List<Argument>
                 {
                    new Argument { Name = "seq", Type="List<string>", Description="" }
                 },
-                new Argument { Name = "", Type = "bool", Description="" },
+                new Argument { Name = "", Type = "bool", Description = "" },
                 "",
-                new List<string> { "System","System.Linq", "System.Collections.Generic" },
+                new List<string> { "System", "System.Linq", "System.Collections.Generic" },
                 new List<MetadataReference>
                 {
                      MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
@@ -55,14 +59,47 @@ namespace monacotest
                 }
                 );
 
-            editor.AddCSharpLanguageService(ctx);
-
-            editor.EditorLanguage = EditorLanguage.CSharp;
-            editor.Value = @"
-return true;
-";
-
+                editor.AddCSharpLanguageService(ctx);
+                var langs = editor.GetEditorLanguages();
+                editor.SetLanguage("csharp");
+            };
+            var vm = new ViewModel { Value = @"return true;" };
+            DataContext = vm;
+            
         }
         
+    }
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            var pc = PropertyChanged;
+            if(pc != null)
+            {
+                pc.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #region Value
+        private string mValue;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Value
+        {
+            get
+            {
+                return mValue;
+            }
+            set
+            {
+                mValue = value;
+                OnPropertyChanged("Value");
+            }
+        }
+        #endregion Value
+
     }
 }

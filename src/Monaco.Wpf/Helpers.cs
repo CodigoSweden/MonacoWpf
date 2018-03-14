@@ -16,13 +16,11 @@ namespace Monaco.Wpf
         } 
     }
 
-    public enum EditorLanguage
-    { 
-        CSharp,
-        Typescript,
-        Javascript,
-        Css,
-        Html,
-        Json
+    public class EditorLanguage
+    {
+        public string Id { get; set; }
+        public List<string> Extensions { get; set; }
+        public List<string> Aliases { get; set; }
     }
+
 }

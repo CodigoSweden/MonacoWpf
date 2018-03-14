@@ -5,28 +5,31 @@ using System.IO.Compression;
 using System.Net;
 using System.Threading;
 
-namespace Monaco.Wpf 
+namespace Monaco.Wpf
 {
-       
+
     public class EmbeddedHttpServer
     {
-        
+
 
 
         static EmbeddedHttpServer _singelton;
         public static void EnsureStarted()
         {
-            if(_singelton == null)
+            if (_singelton == null)
             {
-                _singelton = new EmbeddedHttpServer(52391);
+
+                _singelton = new EmbeddedHttpServer();
+
+
             }
         }
         public static void AddHandler(IRequestHandler handler)
         {
             _singelton._handlers.Add(handler);
         }
-        public static string EditorUri => $"http://localhost:52391/editor.html";
-        public static string DiffUri => $"http://localhost:52391/diff.html";
+        public static string EditorUri => $"http://localhost:{_singelton._port.ToString()}/editor.html";
+        public static string DiffUri => $"http://localhost:{_singelton._port.ToString()}/diff.html";
 
 
         private Thread _serverThread;
@@ -34,14 +37,14 @@ namespace Monaco.Wpf
         private List<IRequestHandler> _handlers;
         private int _port;
 
-        private EmbeddedHttpServer( int port)
+        private EmbeddedHttpServer()
         {
             _handlers = new List<IRequestHandler> { new EmbeddedFilesHandler() };
-            Initialize(port);
+            Initialize();
         }
-        private void Initialize(int port)
+        private void Initialize()
         {
-            this._port = port;
+            
             _serverThread = new Thread(this.Listen);
             _serverThread.Start();
         }
@@ -52,9 +55,26 @@ namespace Monaco.Wpf
         }
         private void Listen()
         {
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://localhost:" + _port.ToString() + "/");
-            _listener.Start();
+
+            _port = 52392;
+            var isCreated = false;
+            while (!isCreated)
+            {
+                _port++;
+                try
+                {
+                    _listener = new HttpListener();
+                    _listener.Prefixes.Add("http://localhost:" + _port.ToString() + "/");
+                    _listener.Start();
+
+                    isCreated = true;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            
             while (true)
             {
                 try
@@ -80,7 +100,7 @@ namespace Monaco.Wpf
                     if (isHandled)
                         break;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -89,20 +109,20 @@ namespace Monaco.Wpf
                 }
             }
 
-            if(isHandled)
+            if (isHandled)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
 
-            context.Response.OutputStream.Close();   
+            context.Response.OutputStream.Close();
         }
 
-        
-      
 
-     
 
-    
+
+
+
+
     }
 
 

@@ -6,16 +6,20 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monaco.Wpf
 {
     public class EmbeddedFilesHandler : IRequestHandler
     {
         private Dictionary<string, byte[]> _files;
+        private string _lastModified;
         public EmbeddedFilesHandler()
         {
             _files = new Dictionary<string, byte[]>();
-            using (var zipStream = typeof(EmbeddedFilesHandler).Assembly.GetManifestResourceStream("Monaco.Wpf.editor.zip"))
+            _lastModified = DateTime.Now.ToString("r");
+            using (var zipStream = typeof(EmbeddedFilesHandler).Assembly.GetManifestResourceStream("Monaco.Wpf.editor.zip") ??
+                                   typeof(EmbeddedFilesHandler).Assembly.GetManifestResourceStream("monaco.wpf.editor.zip"))
             {
                 using (ZipArchive archive = new ZipArchive(zipStream))
                 {
@@ -76,7 +80,7 @@ namespace Monaco.Wpf
                 context.Response.ContentType = _mimeTypeMappings.TryGetValue(Path.GetExtension(filename), out var mime) ? mime : "application/octet-stream";
                 context.Response.ContentLength64 = file.Length;
                 context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-                context.Response.AddHeader("Last-Modified", DateTime.Now.ToString("r"));
+                context.Response.AddHeader("Last-Modified", _lastModified);
 
                 context.Response.OutputStream.Write(file, 0, file.Length);
                 context.Response.OutputStream.Flush();

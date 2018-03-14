@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -7,39 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Monaco.Wpf
 {
     public class MonacoEditor : UserControl
     {
-        public EditorLanguage EditorLanguage
-        {
-            get { return (EditorLanguage)GetValue(EditorLanguageProperty); }
-            set
-            {
-                if (value != EditorLanguage)
-                {
-                    SetValue(EditorLanguageProperty, value);
-                }
-            }
-        }
-        public static readonly DependencyProperty EditorLanguageProperty =
-            DependencyProperty.Register("EditorLanguage", typeof(EditorLanguage), typeof(MonacoEditor), new PropertyMetadata
-            {
-                DefaultValue = EditorLanguage.Typescript,
-                PropertyChangedCallback = (o, m) => (o as MonacoEditor)?.UpdateLanguage()
-            });
-        public void UpdateLanguage()
-        {
-            
-                if (_isInitialized)
-                {
-                    var l = EditorLanguage;
-                    var lang = EditorLanguage.ToString().ToLower();
-                    _browser.InvokeScript("editorSetLang", lang);
-                }
-            
-        }
+        public EventHandler OnEditorInitialized;
         public string Value
         {
             get { return (string)GetValue(ValueProperty); }
@@ -49,16 +24,25 @@ namespace Monaco.Wpf
                 {
                     SetValue(ValueProperty, value);
                 }
-            }
+        }
         }
 
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(string), typeof(MonacoEditor), new PropertyMetadata
-            {
-                DefaultValue = "",
-                PropertyChangedCallback = (o, m) => (o as MonacoEditor)?.UpdateValue()
-            });
+            DependencyProperty.Register("Value", typeof(string), typeof(MonacoEditor),
+                new FrameworkPropertyMetadata
+                {
+                    DefaultValue = "",
+                    BindsTwoWayByDefault = true,
+                    DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    PropertyChangedCallback = (o, m) => (o as MonacoEditor)?.UpdateValue()
+                });
+            //    new PropertyMetadata()
+            //{
+            //    DefaultValue = "",
+
+                //    PropertyChangedCallback = (o, m) => (o as MonacoEditor)?.UpdateValue()
+                //});
         public void UpdateValue()
         {
             if (_isInitialized && _monaco.getValue() != Value)
@@ -81,30 +65,91 @@ namespace Monaco.Wpf
             var sitePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MonacoWpf", "Site");
             _isInitialized = false;
             _browser = new WebBrowser();
-            
-            Content = _browser;
-            _monaco = new MonacoIntegration(  
-                browser: _browser,
-                onValueChanged: value => Value = value
-                );
-            _browser.ObjectForScripting = _monaco;
-            _browser.Navigated += async (o, e) =>
+            var tb = new TextBlock
             {
-                await Task.Delay(3000);
-                _isInitialized = true;
-                UpdateLanguage();
-                UpdateValue();
-
+                Text = "Loading Editor...",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
             };
+            _monaco = new MonacoIntegration(
+                browser: _browser,
+                onValueChanged: value => Value = value,
+                getValue: () => Value,
+                getLang: () => _lang,
+                onInitDone: () =>
+                {
+                    _isInitialized = true;
+                    foreach (var a in _afterInits)
+                    {
+                        a();
+                    }
+                    UpdateValue();
+                    var e = OnEditorInitialized;
+                    if(e != null)
+                    {
+                        e.Invoke(this, new EventArgs());
+                    }
+                    _browser.Visibility = Visibility.Visible;
+                    tb.Visibility = Visibility.Collapsed;
+
+                });
+            _browser.ObjectForScripting = _monaco;
+            
+           
+            this.Unloaded += (o, e) =>
+            {
+                _browser.Dispose();
+            };
+
+          
+            _browser.Visibility = Visibility.Collapsed;
+            Content = new Grid
+            {
+                Children =
+                {
+                    tb,
+                    _browser
+                }
+            };
+
             _browser.Navigate(EmbeddedHttpServer.EditorUri);
-
-
-            //EditorLanguage =  _monaco.getLanguage();
-            //Value = _monaco.getValue();
-
-
         }
 
+        List<Action> _afterInits = new List<Action>();
+        public void RegisterCSharpServices(Guid id)
+        {
+            if (_isInitialized)
+            {
+                _monaco.registerCSharpsServices(id);
+            }
+            else
+            {
+                _afterInits.Add(() => _monaco.registerCSharpsServices(id));
+            }
+        }
+        private string _lang = "plaintext";
+        public void SetLanguage(string id)
+        {
+            _lang = id;
+            if (_isInitialized)
+            {
+                _browser.InvokeScript("editorSetLang", id);
+            }
+            else
+            {
+                _afterInits.Add(() => _browser.InvokeScript("editorSetLang", id));
+            }
+        }
+        public List<EditorLanguage> GetEditorLanguages()
+        {
+            if (_isInitialized)
+            {
+                var langs = _monaco.editorGetLanguages();
+
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<List<EditorLanguage>>(langs);
+            }
+            throw new ArgumentException();
+        }
 
 
     }

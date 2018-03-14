@@ -3,10 +3,7 @@ require(['vs/editor/editor.main'], function () {
     var div = document.getElementById('container');
     div.style.width = window.external.getWidth().toString() + 'px';
     div.style.height = window.external.getHeight().toString() + 'px';
-    document.editor = monaco.editor.create(document.getElementById('container'), {
-        value: '',
-        language: 'typescript',
-    });
+    document.editor = monaco.editor.create(document.getElementById('container'), { value: window.external.getInitialValue(), language: window.external.getInitialLang() });
     // Bind content
     document.editor.onDidChangeModelContent(function () {
         window.external.onValueChanged(document.editor.getValue());
@@ -19,6 +16,22 @@ require(['vs/editor/editor.main'], function () {
         div.style.height = window.external.getHeight().toString() + 'px';
         document.editor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
     };
+    window.external.onInitDone();
+});
+// Functions exposed to the CLR
+function editorGetValue() {
+    return document.editor.getValue();
+}
+function editorSetValue(value) {
+    document.editor.setValue(value);
+}
+function editorGetLanguages() {
+    return JSON.stringify(monaco.languages.getLanguages());
+}
+function editorSetLang(lang) {
+    monaco.editor.setModelLanguage(document.editor.getModel(), lang);
+}
+function registerCSharpsServices(id) {
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
     // monaco.languages.registerDocumentFormattingEditProvider
     // monaco.languages.registerDocumentHighlightProvider
@@ -28,19 +41,6 @@ require(['vs/editor/editor.main'], function () {
     // monaco.languages.registerSignatureHelpProvider
     // diagnostics
     // monaco.editor.setModelMarkers
-});
-// Functions exposed to the CLR
-function editorGetValue() {
-    return document.editor.getValue();
-}
-function editorSetValue(value) {
-    document.editor.setValue(value);
-}
-function editorGetLang() {
-    return "";
-}
-function editorSetLang(lang) {
-    monaco.editor.setModelLanguage(document.editor.getModel(), lang);
 }
 // Csharp language services...
 var CsharpCompletionProvider = /** @class */ (function () {
@@ -67,7 +67,7 @@ var RestClient = /** @class */ (function () {
         return RestClient.PostServer("ProvideCompletionItems", JSON.stringify(args));
     };
     RestClient.PostServer = function (name, args) {
-        var url = "http://localhost:52391/roslyn/" + name;
+        var url = "./roslyn/" + name;
         return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));

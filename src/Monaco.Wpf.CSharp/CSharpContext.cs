@@ -54,7 +54,6 @@ namespace Monaco.Wpf.CSharp
             SourceText = SourceText.From(code);
             Document = Document.WithText(SourceText);
             return Document;
-
         }
 
 

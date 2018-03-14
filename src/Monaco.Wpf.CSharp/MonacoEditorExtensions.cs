@@ -12,6 +12,7 @@ namespace Monaco.Wpf
         public static void AddCSharpLanguageService(this MonacoEditor editor, CSharpContext cSharpCtx)
         {
             EmbeddedHttpServer.AddHandler(new RoslynHandler(cSharpCtx));
+            editor.RegisterCSharpServices(Guid.Empty);
         }
     }
 }

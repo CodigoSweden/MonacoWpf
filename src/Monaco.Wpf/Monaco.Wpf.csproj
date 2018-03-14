@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
+    <Authors>Codigo</Authors>
+    <Company>Codigo</Company>
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
