@@ -808,4 +808,28 @@ namespace Monaco.Wpf.CSharp
             return null;
         }
     }
+
+    public class Hover
+    {
+    
+        public List<MarkedString> contents { get; set; }
+        public Range range { get; set; }
+    }
+    public class MarkedString
+    {
+        public string language { get; set; }
+        public string value { get; set; }
+
+    }
+    public class Range
+    {
+    
+        public Position start { get; set; }
+        public Position end { get; set; }
+    }
+    public class Position
+    {
+        public long line { get; set; }
+        public long character { get; set; }
+    }
 }

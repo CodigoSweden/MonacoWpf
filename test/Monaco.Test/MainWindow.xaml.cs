@@ -46,6 +46,7 @@ namespace monacotest
                 new Argument { Name = "", Type = "bool", Description = "" },
                 "",
                 new List<string> { "System", "System.Linq", "System.Collections.Generic" },
+                new List<string> { "System.Linq.*","bool", "System.Collections.Generic.List<*>", "string", "DynamicScript"},
                 new List<MetadataReference>
                 {
                      MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),

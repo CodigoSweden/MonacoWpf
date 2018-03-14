@@ -19,9 +19,7 @@ namespace Monaco.Wpf.CSharp
             var completionList = service.GetCompletionsAsync(_document, position).Result;
 
             var completions = new HashSet<AutoCompleteResponse>();
-
-            var wordToComplete = "";
-
+            
             if (completionList != null)
             {
                 // Only trigger on space if Roslyn has object creation items
@@ -46,6 +44,17 @@ namespace Monaco.Wpf.CSharp
                         {
                             foreach (var symbol in symbols)
                             {
+                                if (context.Types != null && symbol.Kind != SymbolKind.Namespace)
+                                {
+                                    var name = symbol.ContainingType != null 
+                                        ? symbol.ContainingType.ToDisplayString() 
+                                        : symbol.ToString();
+
+                                    var allowed = context.Types.Any(y => name.Like(y));
+
+                                    if (!allowed)
+                                        continue;
+                                }
                                 if (item.UseDisplayTextAsCompletionText())
                                 {
                                     completionText = item.DisplayText;

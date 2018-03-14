@@ -28,6 +28,13 @@ namespace Monaco.Wpf
         {
             _singelton._handlers.Add(handler);
         }
+        public static void RemoveHandlers(List<IRequestHandler> handlers)
+        {
+            foreach (var item in handlers)
+            {
+                _singelton._handlers.Remove(item);
+            }
+        }
         public static string EditorUri => $"http://localhost:{_singelton._port.ToString()}/editor.html";
         public static string DiffUri => $"http://localhost:{_singelton._port.ToString()}/diff.html";
 

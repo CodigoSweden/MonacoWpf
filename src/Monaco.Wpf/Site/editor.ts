@@ -58,11 +58,11 @@ function editorSetLang(lang: string) {
         lang);
 }
 function registerCSharpsServices(id: string) {
-    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
+    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider(id));
     // monaco.languages.registerDocumentFormattingEditProvider
     // monaco.languages.registerDocumentHighlightProvider
     // monaco.languages.registerDocumentSymbolProvider
-    // monaco.languages.registerHoverProvider
+    monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider(id));
     // monaco.languages.registerOnTypeFormattingEditProvider
     // monaco.languages.registerSignatureHelpProvider
 
@@ -73,7 +73,11 @@ function registerCSharpsServices(id: string) {
 
 // Csharp language services...
 class CsharpCompletionProvider implements monaco.languages.CompletionItemProvider {
-    
+
+    _id: string;
+    constructor(id: string) {
+        this._id = id;
+    }
     triggerCharacters?: string[] = [' ', '.'];
     provideCompletionItems(
         model: monaco.editor.IReadOnlyModel,
@@ -85,7 +89,7 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
         monaco.Thenable<monaco.languages.CompletionList> {
         //return [{ label: "test" }] as monaco.languages.CompletionItem[];
 
-        return RestClient.ProvideCompletionItems(model,position);
+        return RestClient.ProvideCompletionItems(this._id,model, position);
   
     }
     //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
@@ -93,21 +97,39 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
     //}
 
 }
+class CsharpHoverProvider implements monaco.languages.HoverProvider {
 
+    
+    _id: string;
+    constructor(id: string) {
+        this._id = id;
+    }
+    provideHover(model: monaco.editor.IReadOnlyModel, position: monaco.Position, token: monaco.CancellationToken): monaco.languages.Hover | monaco.Thenable<monaco.languages.Hover> {
+        return RestClient.ProvideHover(this._id, model, position);
+    }
+
+}
 class RestClient {
 
 
-    public static ProvideCompletionItems(model: monaco.editor.IReadOnlyModel,position: monaco.Position): Promise<monaco.languages.CompletionItem[]> {
+    public static ProvideHover(id: string, model: monaco.editor.IReadOnlyModel, position: monaco.Position): Promise<monaco.languages.Hover> {
         var args = {} as any;
         args["value"] = JSON.stringify(model.getValue());
         args["lineNumber"] = JSON.stringify(position.lineNumber);
         args["column"] = JSON.stringify(position.column);
-        return RestClient.PostServer<monaco.languages.CompletionItem[]>("ProvideCompletionItems", JSON.stringify(args));
+        return RestClient.PostServer<monaco.languages.Hover>("ProvideHover", JSON.stringify(args), id);
+    }
+    public static ProvideCompletionItems(id: string,model: monaco.editor.IReadOnlyModel,position: monaco.Position): Promise<monaco.languages.CompletionItem[]> {
+        var args = {} as any;
+        args["value"] = JSON.stringify(model.getValue());
+        args["lineNumber"] = JSON.stringify(position.lineNumber);
+        args["column"] = JSON.stringify(position.column);
+        return RestClient.PostServer<monaco.languages.CompletionItem[]>("ProvideCompletionItems", JSON.stringify(args),id);
     }
 
-    static PostServer<T1>(name: string, args: string): Promise<T1> {
+    static PostServer<T1>(name: string, args: string, id: string): Promise<T1> {
        
-        var url = `./roslyn/${name}`;
+        var url = `./roslyn/${name}/${id}`;
         return new Promise<T1>((resolve, reject) => {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));

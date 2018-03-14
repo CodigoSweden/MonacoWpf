@@ -23,16 +23,21 @@ namespace Monaco.Wpf.CSharp
         public Document Document { get; private set; }
         public SourceText SourceText { get; private set; }
 
+        public List<string> Types { get; }
         string _template;
         int _starLine;
+        public Guid Id { get;  }
 
         public CSharpContext(
             List<Argument> arguments,
             Argument returnType,
             string initializeCode,
             List<string> usings,
+            List<string> types,
             List<MetadataReference> references)
         {
+            Id = Guid.NewGuid();
+            Types = types;
             (_template, _starLine) = GetTemplate(arguments, returnType, initializeCode, usings);
 
             Workspace = new AdhocWorkspace();
@@ -57,7 +62,12 @@ namespace Monaco.Wpf.CSharp
         }
 
 
-        
+        /// <summary></summary>
+        /// <param name="arguments"></param>
+        /// <param name="returnType"></param>
+        /// <param name="initializeCode"></param>
+        /// <param name="usings"></param>
+        /// <returns></returns>
         public static (string template,int scriptStartLine) GetTemplate(
             List<Argument> arguments,
             Argument returnType,
@@ -76,6 +86,9 @@ namespace Monaco.Wpf.CSharp
 public class DynamicScript
 {{{{
     public {fsignatur} TheScript = new {fsignatur}(Script);
+    /// <summary></summary>
+    /// <param name=""seq"">A sequence of logmessages</param>
+    /// <returns></returns>
     public static {returnType.Type} Script({marguments})
     {{{{
         {initializeCode}

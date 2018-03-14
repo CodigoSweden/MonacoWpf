@@ -98,6 +98,8 @@ namespace Monaco.Wpf
            
             this.Unloaded += (o, e) =>
             {
+
+
                 _browser.Dispose();
             };
 
@@ -115,9 +117,12 @@ namespace Monaco.Wpf
             _browser.Navigate(EmbeddedHttpServer.EditorUri);
         }
 
+        List<IRequestHandler> _handlers = new List<IRequestHandler>();
         List<Action> _afterInits = new List<Action>();
-        public void RegisterCSharpServices(Guid id)
+        public void RegisterCSharpServices(Guid id, IRequestHandler handler)
         {
+            _handlers.Add(handler);
+            EmbeddedHttpServer.AddHandler(handler);
             if (_isInitialized)
             {
                 _monaco.registerCSharpsServices(id);

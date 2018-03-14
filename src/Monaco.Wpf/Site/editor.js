@@ -32,11 +32,11 @@ function editorSetLang(lang) {
     monaco.editor.setModelLanguage(document.editor.getModel(), lang);
 }
 function registerCSharpsServices(id) {
-    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
+    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider(id));
     // monaco.languages.registerDocumentFormattingEditProvider
     // monaco.languages.registerDocumentHighlightProvider
     // monaco.languages.registerDocumentSymbolProvider
-    // monaco.languages.registerHoverProvider
+    monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider(id));
     // monaco.languages.registerOnTypeFormattingEditProvider
     // monaco.languages.registerSignatureHelpProvider
     // diagnostics
@@ -44,30 +44,44 @@ function registerCSharpsServices(id) {
 }
 // Csharp language services...
 var CsharpCompletionProvider = /** @class */ (function () {
-    function CsharpCompletionProvider() {
+    function CsharpCompletionProvider(id) {
         this.triggerCharacters = [' ', '.'];
-        //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
-        //    return { label: "test" } as monaco.languages.CompletionItem;
-        //}
+        this._id = id;
     }
     CsharpCompletionProvider.prototype.provideCompletionItems = function (model, position, token) {
         //return [{ label: "test" }] as monaco.languages.CompletionItem[];
-        return RestClient.ProvideCompletionItems(model, position);
+        return RestClient.ProvideCompletionItems(this._id, model, position);
     };
     return CsharpCompletionProvider;
+}());
+var CsharpHoverProvider = /** @class */ (function () {
+    function CsharpHoverProvider(id) {
+        this._id = id;
+    }
+    CsharpHoverProvider.prototype.provideHover = function (model, position, token) {
+        return RestClient.ProvideHover(this._id, model, position);
+    };
+    return CsharpHoverProvider;
 }());
 var RestClient = /** @class */ (function () {
     function RestClient() {
     }
-    RestClient.ProvideCompletionItems = function (model, position) {
+    RestClient.ProvideHover = function (id, model, position) {
         var args = {};
         args["value"] = JSON.stringify(model.getValue());
         args["lineNumber"] = JSON.stringify(position.lineNumber);
         args["column"] = JSON.stringify(position.column);
-        return RestClient.PostServer("ProvideCompletionItems", JSON.stringify(args));
+        return RestClient.PostServer("ProvideHover", JSON.stringify(args), id);
     };
-    RestClient.PostServer = function (name, args) {
-        var url = "./roslyn/" + name;
+    RestClient.ProvideCompletionItems = function (id, model, position) {
+        var args = {};
+        args["value"] = JSON.stringify(model.getValue());
+        args["lineNumber"] = JSON.stringify(position.lineNumber);
+        args["column"] = JSON.stringify(position.column);
+        return RestClient.PostServer("ProvideCompletionItems", JSON.stringify(args), id);
+    };
+    RestClient.PostServer = function (name, args, id) {
+        var url = "./roslyn/" + name + "/" + id;
         return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', encodeURI(url));

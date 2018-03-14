@@ -26,6 +26,11 @@ namespace Monaco.Wpf.CSharp
             if (pathParts[0] != "roslyn")
                 return false;
 
+            var cid = Guid.Parse(pathParts[2]);
+            if (cid != _context.Id)
+                return false;
+
+
             var json = "";
 
             var ms = new MemoryStream();
@@ -41,16 +46,21 @@ namespace Monaco.Wpf.CSharp
 
             if (pathParts[1] == "ProvideCompletionItems")
             {
-                
-
                 var value = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(args["value"]);
                 var lineNumber = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["lineNumber"]);
                 var column = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["column"]);
 
-
                 var names = ProvideCompletionItemsHandler.Handle(_context, value, lineNumber, column).Result;
 
+                json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
+            }
+            else if (pathParts[1] == "ProvideHover")
+            {
+                var value = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(args["value"]);
+                var lineNumber = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["lineNumber"]);
+                var column = Newtonsoft.Json.JsonConvert.DeserializeObject<int>(args["column"]);
 
+                var names = ProvideHoverHandler.Handle(_context, value, lineNumber, column).Result;
 
                 json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
             }
