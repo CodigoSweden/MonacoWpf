@@ -1,15 +1,16 @@
-﻿## Usage
+﻿# Monaco Wpf
+A reusable wpf control that embedds the monaco editor. 
+- MonacoEditor 
+- MonacoDiffEditor
+- LanguageService for a C# based DSL
 
+## Usage
 - Set Browser emulation
-
 - Bind To Language And Value
-
 - csharp, template...
 
 ## Build
-
 From command line
-
 - Installera Node.js
 - npm install gulp-cli -g
 - npm install
