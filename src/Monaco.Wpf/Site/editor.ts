@@ -59,7 +59,7 @@ function editorSetLang(lang: string) {
 }
 function registerCSharpsServices(id: string) {
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider(id));
-    // monaco.languages.registerDocumentFormattingEditProvider
+    monaco.languages.registerDocumentFormattingEditProvider('csharp', new CsharpDocumentFormattingEditProvider(id));
     // monaco.languages.registerDocumentHighlightProvider
     // monaco.languages.registerDocumentSymbolProvider
     monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider(id));
@@ -97,21 +97,31 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
     //}
 
 }
-class CsharpHoverProvider implements monaco.languages.HoverProvider {
-
-    
+class CsharpDocumentFormattingEditProvider implements monaco.languages.DocumentFormattingEditProvider {
     _id: string;
+    constructor(id: string) {
+        this._id = id;
+    }
+    provideDocumentFormattingEdits(model: monaco.editor.IReadOnlyModel, options: monaco.languages.FormattingOptions, token: monaco.CancellationToken): monaco.languages.TextEdit[] | monaco.Thenable<monaco.languages.TextEdit[]> {
+        return RestClient.FormatDocument(this._id,model);
+    }
+}
+class CsharpHoverProvider implements monaco.languages.HoverProvider {
+   _id: string;
     constructor(id: string) {
         this._id = id;
     }
     provideHover(model: monaco.editor.IReadOnlyModel, position: monaco.Position, token: monaco.CancellationToken): monaco.languages.Hover | monaco.Thenable<monaco.languages.Hover> {
         return RestClient.ProvideHover(this._id, model, position);
     }
-
 }
 class RestClient {
 
-
+    public static FormatDocument(id: string, model: monaco.editor.IReadOnlyModel): Promise<monaco.languages.TextEdit[]> {
+        var args = {} as any;
+        args["value"] = JSON.stringify(model.getValue());
+        return RestClient.PostServer<monaco.languages.TextEdit[]>("FormatDocument", JSON.stringify(args), id);
+    }
     public static ProvideHover(id: string, model: monaco.editor.IReadOnlyModel, position: monaco.Position): Promise<monaco.languages.Hover> {
         var args = {} as any;
         args["value"] = JSON.stringify(model.getValue());

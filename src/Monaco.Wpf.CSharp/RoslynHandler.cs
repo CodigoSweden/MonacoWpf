@@ -64,6 +64,14 @@ namespace Monaco.Wpf.CSharp
 
                 json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
             }
+            else if (pathParts[1] == "FormatDocument")
+            {
+                var value = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(args["value"]);
+  
+                var names = FormatDocumentHandler.Handle(_context, value).Result;
+
+                json = Newtonsoft.Json.JsonConvert.SerializeObject(names);
+            }
 
             var data = Encoding.UTF8.GetBytes(json);
             context.Response.OutputStream.Write(data, 0, data.Length);

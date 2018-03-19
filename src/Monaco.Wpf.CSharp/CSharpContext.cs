@@ -22,6 +22,7 @@ namespace Monaco.Wpf.CSharp
         public Project Project { get; }
         public Document Document { get; private set; }
         public SourceText SourceText { get; private set; }
+        public int StartLine => _starLine;
 
         public List<string> Types { get; }
         string _template;
@@ -53,9 +54,9 @@ namespace Monaco.Wpf.CSharp
             return SourceText.Lines.GetPosition(new Microsoft.CodeAnalysis.Text.LinePosition(line + _starLine - 1, column - 1));
         }
 
-        public Document WithText(string code)
+        public Document WithText(string code,bool withTemplate = true)
         {
-            code = string.Format(_template, code);
+            code = withTemplate ? string.Format(_template, code) : code;
             SourceText = SourceText.From(code);
             Document = Document.WithText(SourceText);
             return Document;

@@ -33,7 +33,7 @@ function editorSetLang(lang) {
 }
 function registerCSharpsServices(id) {
     monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider(id));
-    // monaco.languages.registerDocumentFormattingEditProvider
+    monaco.languages.registerDocumentFormattingEditProvider('csharp', new CsharpDocumentFormattingEditProvider(id));
     // monaco.languages.registerDocumentHighlightProvider
     // monaco.languages.registerDocumentSymbolProvider
     monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider(id));
@@ -54,6 +54,15 @@ var CsharpCompletionProvider = /** @class */ (function () {
     };
     return CsharpCompletionProvider;
 }());
+var CsharpDocumentFormattingEditProvider = /** @class */ (function () {
+    function CsharpDocumentFormattingEditProvider(id) {
+        this._id = id;
+    }
+    CsharpDocumentFormattingEditProvider.prototype.provideDocumentFormattingEdits = function (model, options, token) {
+        return RestClient.FormatDocument(this._id, model);
+    };
+    return CsharpDocumentFormattingEditProvider;
+}());
 var CsharpHoverProvider = /** @class */ (function () {
     function CsharpHoverProvider(id) {
         this._id = id;
@@ -66,6 +75,11 @@ var CsharpHoverProvider = /** @class */ (function () {
 var RestClient = /** @class */ (function () {
     function RestClient() {
     }
+    RestClient.FormatDocument = function (id, model) {
+        var args = {};
+        args["value"] = JSON.stringify(model.getValue());
+        return RestClient.PostServer("FormatDocument", JSON.stringify(args), id);
+    };
     RestClient.ProvideHover = function (id, model, position) {
         var args = {};
         args["value"] = JSON.stringify(model.getValue());
