@@ -4,19 +4,13 @@
     <TargetFramework>net462</TargetFramework>
     <Authors>Codigo</Authors>
     <Company>Codigo</Company>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="clean&#xD;&#xA;gulp" />
   </Target>
-
-  <ItemGroup>
-    <None Remove="editor.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="editor.zip" />
-  </ItemGroup>
 
   <ItemGroup>
 

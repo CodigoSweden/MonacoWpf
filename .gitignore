@@ -8,6 +8,8 @@ node_modules
 dist
 out
 *.js.map
+Site/*.js
+*.zip
 *.log
 src/boulder.web/ClientApp/**/*.js
 packages/*

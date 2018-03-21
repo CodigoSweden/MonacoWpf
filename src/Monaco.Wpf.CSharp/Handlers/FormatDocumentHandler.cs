@@ -17,17 +17,14 @@ namespace Monaco.Wpf.CSharp
         public static async Task<List<TextEdit>> Handle(CSharpContext context, string code)
         {
             var _document = context.WithText(code,false);
-            
-            
 
-            var newDocument = await Formatter.FormatAsync(_document, _document.Project.Solution.Workspace.Options
+            var doc = _document.WithText(SourceText.From( code.Trim(' ', '\r', 'n', '\t')));
+
+            var newDocument = await Formatter.FormatAsync(doc, _document.Project.Solution.Workspace.Options
                .WithChangedOption(CSharpFormattingOptions.IndentBlock, true)
                .WithChangedOption(CSharpFormattingOptions.IndentBraces,false)
                .WithChangedOption(FormattingOptions.UseTabs,"C#",false)
-
-              .WithChangedOption(FormattingOptions.SmartIndent, "C#", FormattingOptions.IndentStyle.Smart)
-
-               );
+               .WithChangedOption(FormattingOptions.SmartIndent, "C#", FormattingOptions.IndentStyle.Smart));
                 
             var changes = await newDocument.GetTextChangesAsync(_document);
             var res = changes.Select(x=>new TextEdit
@@ -38,7 +35,6 @@ namespace Monaco.Wpf.CSharp
             .ToList();
 
             return res;
-
         }
 
         // Convert method from omnisharp: omnisharp-roslyn\src\OmniSharp.Roslyn\Utilities\TextChangeHelper.cs

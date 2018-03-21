@@ -42,7 +42,7 @@ require(['vs/editor/editor.main'], function () {
 
 
 
-// Functions exposed to the CLR
+// Functions exposed to the CLR  
 function editorGetValue() {
     return document.editor.getValue();
 }
