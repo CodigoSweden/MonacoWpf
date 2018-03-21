@@ -20,20 +20,23 @@ namespace Monaco.Wpf
         Action<string> _onValueChanged;
         Func<string> _getValue;
         Func<string> _getLang;
+        Action<string, string> _log;
         WebBrowser _browser;
-        public MonacoIntegration(WebBrowser browser, Action<string> onValueChanged, Action onInitDone = null, Func<string> getValue = null, Func<string> getLang = null)
+        public MonacoIntegration(WebBrowser browser, Action<string> onValueChanged, Action onInitDone = null, Func<string> getValue = null, Func<string> getLang = null,Action<string,string> log=null)
         {
             _onValueChanged = onValueChanged;
             _onInitDone = onInitDone;
             _browser = browser;
             _getValue = getValue;
             _getLang = getLang;
+            _log = log;
         }
         // Calls from browser  
         public void onValueChanged(string value) => _onValueChanged(value);
         public void onInitDone() => _onInitDone();
         public string getInitialValue() => _getValue();
         public string getInitialLang() => _getLang();
+        public void log(string s, string m) => _log(s, m);
 
         public int getWidth()    
         {

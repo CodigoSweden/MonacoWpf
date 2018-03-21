@@ -13,6 +13,14 @@
   </Target>
 
   <ItemGroup>
+    <None Remove="editor.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="editor.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
 
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />

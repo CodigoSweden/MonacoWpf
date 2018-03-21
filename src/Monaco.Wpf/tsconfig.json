@@ -1,13 +1,20 @@
 {
   "compilerOptions": {
+
     "noImplicitAny": false,
     "noEmitOnError": true,
     "removeComments": false,
-    "sourceMap": true,
-    "target": "es6"
+    
+    "module": "none",
+    "moduleResolution": "classic",
+
+    "target": "es5",
+    "lib": [ "es6", "dom"],
+    "sourceMap": false,
+    
+    "outFile": "Site/Out/editor.js"
   },
- 
-  "compileOnSave" : true,
+  "include": [ "Site/Src/**/*.ts" ],
   "exclude": [
     "node_modules",
     "wwwroot"

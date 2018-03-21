@@ -76,6 +76,8 @@ namespace Monaco.Wpf
                 onValueChanged: value => Value = value,
                 getValue: () => Value,
                 getLang: () => _lang,
+                log: (s,m) => {
+                },
                 onInitDone: () =>
                 {
                     _isInitialized = true;

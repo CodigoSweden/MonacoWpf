@@ -28,7 +28,8 @@ namespace Monaco.Wpf
             Content = _browser;
             _monaco = new MonacoIntegration(
                 browser: _browser,
-                onValueChanged: value => { }
+                onValueChanged: value => { },
+                log: (s,m) => { }
                 );
             _browser.ObjectForScripting = _monaco;
             _browser.Navigated += async (o, e) =>
