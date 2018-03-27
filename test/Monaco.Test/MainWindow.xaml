@@ -3,19 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:monaco="clr-namespace:Monaco.Wpf;assembly=Monaco.Wpf"
+ 
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="725">
-    <Grid >
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
             <RowDefinition Height="auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        
-        <monaco:MonacoEditor x:Name="editor" Value="{Binding Value}"  />
+        <Menu IsMainMenu="True"  VerticalAlignment="Stretch">
+            
+            <MenuItem Header="CSharp"  Click="CSharp_Click" />
+            <MenuItem Header="Typescript" Click="Typescript_Click" />
+            <MenuItem Header="Json" Click="Json_Click" />
+        </Menu>
 
-
-        <TextBlock Grid.Row="1" Text="{Binding Value.Length}" Background="LightBlue" />
-        <!--<monaco:MonacoDiffEditor />-->
+        <Grid Name="Content" Grid.Row="1" DockPanel.Dock="Bottom">
+            
+        </Grid>
     </Grid>
 </Window>

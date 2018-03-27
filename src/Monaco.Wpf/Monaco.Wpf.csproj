@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <Authors>Codigo</Authors>
     <Company>Codigo</Company>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
+    <AssemblyOriginatorKeyFile>..\..\TempKey.snk</AssemblyOriginatorKeyFile>
+     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="clean&#xD;&#xA;gulp" />
+    <Exec Command="gulp" />
   </Target>
 
   <ItemGroup>

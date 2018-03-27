@@ -88,7 +88,7 @@ public class DynamicScript
 {{{{
     public {fsignatur} TheScript = new {fsignatur}(Script);
     /// <summary></summary>
-    /// <param name=""seq"">A sequence of logmessages</param>
+    {string.Join("\r\n",arguments.Select(x=>$@"    /// <param name=""{x.Name}"">{x.Description}</param>"))}
     /// <returns></returns>
     public static {returnType.Type} Script({marguments})
     {{{{
@@ -100,7 +100,7 @@ public class DynamicScript
     }}}}
 }}}}";
             var startIndex = code.IndexOf("{0}");
-            var lines = code.Substring(0, startIndex).Split(new string[] { "\r\n" }, StringSplitOptions.None).Count() -1;
+            var lines = code.Substring(0, startIndex).Split(new string[] { "\n" }, StringSplitOptions.None).Count() - 1;
             return (code, lines);
         }
         

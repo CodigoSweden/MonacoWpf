@@ -25,6 +25,8 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
     //}
 
 }
+
+
 class CsharpDocumentFormattingEditProvider implements monaco.languages.DocumentFormattingEditProvider {
     _id: string;
     constructor(id: string) {
@@ -45,6 +47,11 @@ class CsharpHoverProvider implements monaco.languages.HoverProvider {
 }
 class RestClient {
 
+    public static GetDiagnostics(id: string, model: monaco.editor.IReadOnlyModel): Promise<monaco.editor.IMarkerData[]> {
+        var args = {} as any;
+        args["value"] = JSON.stringify(model.getValue());
+        return RestClient.PostServer<monaco.editor.IMarkerData[]>("GetDiagnostics", JSON.stringify(args), id);
+    }
     public static FormatDocument(id: string, model: monaco.editor.IReadOnlyModel): Promise<monaco.languages.TextEdit[]> {
         var args = {} as any;
         args["value"] = JSON.stringify(model.getValue());

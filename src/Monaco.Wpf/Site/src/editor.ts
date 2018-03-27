@@ -68,6 +68,24 @@ function InitLogs() {
     (window as any).console = console;
 }
 
+function MockWindowExternal() {
+    // define a new external
+    var mockedexternal = (function () {
+        return {
+            onValueChanged:  function (value: string) {},
+            onInitDone: function () { },
+            log: function (sev: string, message) { },
+            getInitialValue: function () { return ""},
+            getInitialLang: function () { return "csharp" },
+            getHeight: function () { return 500 },
+            getWidth: function () { return 700}
+        };
+    })();
+
+    //Then redefine the old console
+    (window as any).external = mockedexternal;
+}
+
 function InitEditor() {
     InitLogs();
     require(['vs/editor/editor.main'], function () {
@@ -121,7 +139,21 @@ function registerCSharpsServices(id: string) {
     // monaco.languages.registerOnTypeFormattingEditProvider
     // monaco.languages.registerSignatureHelpProvider
 
-    // diagnostics
-    // monaco.editor.setModelMarkers
+
+    document.editor.onDidChangeModelContent(function () {
+
+        var diagnostics = RestClient.GetDiagnostics(id, document.editor.getModel())
+            .then(x => {
+                console.log(x);
+                monaco.editor.setModelMarkers(document.editor.getModel(), 'csharp', x.map(marker => {
+                    marker.severity = monaco.Severity.Error;
+                    return marker;
+                }));
+            });
+    });
+
+
+    
+    
 }
 

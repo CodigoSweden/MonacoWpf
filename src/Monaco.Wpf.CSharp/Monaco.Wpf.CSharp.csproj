@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <Authors>Codigo</Authors>
     <Company>Codigo</Company>
+    <AssemblyOriginatorKeyFile>..\..\TempKey.snk</AssemblyOriginatorKeyFile>
+       <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

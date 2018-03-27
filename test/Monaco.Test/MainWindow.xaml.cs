@@ -23,6 +23,7 @@ using Monaco.Wpf.CSharp;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
 using System.ComponentModel;
+using monacotest.Examples;
 
 namespace monacotest
 {
@@ -35,72 +36,27 @@ namespace monacotest
         {
             InitializeComponent();
 
-            
-            editor.OnEditorInitialized += (o, e) =>
-            {
-                var ctx = new CSharpContext(
-                new List<Argument>
-                {
-                   new Argument { Name = "seq", Type="List<string>", Description="" }
-                },
-                new Argument { Name = "", Type = "bool", Description = "" },
-                "",
-                new List<string> { "System", "System.Linq", "System.Collections.Generic" },
-                new List<string> { "System.Linq.*","bool", "System.Collections.Generic.List<*>", "string", "DynamicScript"},
-                new List<MetadataReference>
-                {
-                     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(System.Linq.Expressions.ExpressionType).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(Dictionary<,>).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(ValueTuple<,>).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
-
-                }
-                );
-
-                editor.AddCSharpLanguageService(ctx);
-                var langs = editor.GetEditorLanguages();
-                editor.SetLanguage("csharp");
-            };
-            var vm = new ViewModel { Value = @"return true;" };
-            DataContext = vm;
-            
+            Content.Children.Add(new CsharpUserControl());
         }
-        
+
+        private void CSharp_Click(object sender, RoutedEventArgs e)
+        {
+            Content.Children.Clear();
+            Content.Children.Add(new CsharpUserControl());
+        }
+
+        private void Json_Click(object sender, RoutedEventArgs e)
+        {
+            Content.Children.Clear();
+            Content.Children.Add(new JsonUserControl());
+        }
+
+        private void Typescript_Click(object sender, RoutedEventArgs e)
+        {
+            Content.Children.Clear();
+            Content.Children.Add(new TypescriptUserControl());
+        }
     }
 
-    public class ViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
-        {
-            var pc = PropertyChanged;
-            if(pc != null)
-            {
-                pc.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #region Value
-        private string mValue;
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Value
-        {
-            get
-            {
-                return mValue;
-            }
-            set
-            {
-                mValue = value;
-                OnPropertyChanged("Value");
-            }
-        }
-        #endregion Value
-
-    }
+  
 }
