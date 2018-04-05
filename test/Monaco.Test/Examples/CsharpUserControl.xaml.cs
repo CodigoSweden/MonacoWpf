@@ -37,10 +37,20 @@ namespace monacotest.Examples
                    new Argument { Name = "seq", Type="List<string>", Description="" }
                 },
                 new Argument { Name = "", Type = "bool", Description = "" },
-                "",
-                new List<string> { "System", "System.Linq", "System.Collections.Generic" },
-                new List<string> { "System.Linq.*", "bool", "System.Collections.Generic.List<*>", "string", "DynamicScript" },
-                new List<MetadataReference>
+                initializeCode: "",
+                helpers: @"
+                public class Helpers
+{{
+///<summary>
+/// Whats all about?
+///</summary>
+public const int MagicNbr = 42;
+}}
+                
+                ",
+                usings: new List<string> { "System", "System.Linq", "System.Collections.Generic" },
+                types: new List<string> { "System.Linq.*", "bool", "System.Collections.Generic.List<*>", "string", "DynamicScript", "Helpers" },
+                references: new List<MetadataReference>
                 {
                      MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException).GetTypeInfo().Assembly.Location),

@@ -15,7 +15,7 @@
     "gulp-typescript": "^4.0.1",
     "gulp-zip": "^4.1.0",
     "merge-stream": "^1.0.1",
-    "monaco-editor": "^0.11.1",
+    "monaco-editor": "^0.10.1",
     "typescript": "^2.7.2"
   }
 }

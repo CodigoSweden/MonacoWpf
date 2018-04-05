@@ -33,13 +33,14 @@ namespace Monaco.Wpf.CSharp
             List<Argument> arguments,
             Argument returnType,
             string initializeCode,
+            string helpers,
             List<string> usings,
             List<string> types,
             List<MetadataReference> references)
         {
             Id = Guid.NewGuid();
             Types = types;
-            (_template, _starLine) = GetTemplate(arguments, returnType, initializeCode, usings);
+            (_template, _starLine) = GetTemplate(arguments, returnType, initializeCode,helpers, usings);
 
             Workspace = new AdhocWorkspace();
             Project = Workspace.AddProject("temp", LanguageNames.CSharp)
@@ -73,6 +74,7 @@ namespace Monaco.Wpf.CSharp
             List<Argument> arguments,
             Argument returnType,
             string initializeCode,
+            string helpers,
             List<string> usings)
         {
             
@@ -98,7 +100,10 @@ public class DynamicScript
 {{0}}
 
     }}}}
-}}}}";
+}}}}
+
+{helpers}
+";
             var startIndex = code.IndexOf("{0}");
             var lines = code.Substring(0, startIndex).Split(new string[] { "\n" }, StringSplitOptions.None).Count() - 1;
             return (code, lines);
