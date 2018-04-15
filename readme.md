@@ -23,10 +23,8 @@ From command line
 - webbrowser control
 
 ## TODO
-- Library dll
-- Csharp
-- Diff fönster
-- loaded event, window.external
-- förbättra upppackandet
-
-
+- signatur och highlithning
+- json schema från csharp typ m.m
+- add typescript definitions
+- Func to filter intelisense list
+- Kan man få till någon bra template sak..

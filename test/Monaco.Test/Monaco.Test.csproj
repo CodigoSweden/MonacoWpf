@@ -162,7 +162,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Examples\CsharpUserControl.xaml">
+    <Page Include="Examples\CsharpClassUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Examples\CsharpFuncUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,8 +186,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Examples\CsharpUserControl.xaml.cs">
-      <DependentUpon>CsharpUserControl.xaml</DependentUpon>
+    <Compile Include="Examples\CsharpClassUserControl.xaml.cs">
+      <DependentUpon>CsharpClassUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Examples\CsharpFuncUserControl.xaml.cs">
+      <DependentUpon>CsharpFuncUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Examples\JsonUserControl.xaml.cs">
       <DependentUpon>JsonUserControl.xaml</DependentUpon>

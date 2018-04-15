@@ -23,30 +23,18 @@ namespace monacotest.Examples
     /// <summary>
     /// Interaction logic for CsharpUserControl.xaml
     /// </summary>
-    public partial class CsharpUserControl : UserControl
+    public partial class CsharpClassUserControl : UserControl
     {
-        public CsharpUserControl()
+        public CsharpClassUserControl()
         {
             InitializeComponent();
 
             editor.OnEditorInitialized += (o, e) =>
             {
-                var ctx = new CSharpContext(
-                new List<Argument>
-                {
-                   new Argument { Name = "seq", Type="List<string>", Description="" }
-                },
-                new Argument { Name = "", Type = "bool", Description = "" },
-                initializeCode: "",
+                var ctx = new CSharpClassContext(
+              
                 helpers: @"
-                public class Helpers
-{{
-///<summary>
-/// Whats all about?
-///</summary>
 public const int MagicNbr = 42;
-}}
-                
                 ",
                 usings: new List<string> { "System", "System.Linq", "System.Collections.Generic" },
                 types: new List<string> { "System.Linq.*", "bool", "System.Collections.Generic.List<*>", "string", "DynamicScript", "Helpers" },
@@ -67,41 +55,15 @@ public const int MagicNbr = 42;
                 var langs = editor.GetEditorLanguages();
                 editor.SetLanguage("csharp");
             };
-            var vm = new ViewModel { Value = @"return true;" };
+            var vm = new ViewModel { Value = @"
+public bool Foo()
+{
+    return MagicNbr == 42;
+}
+" };
             DataContext = vm;
         }
     }
 
-    public class ViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
-        {
-            var pc = PropertyChanged;
-            if (pc != null)
-            {
-                pc.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #region Value
-        private string mValue;
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Value
-        {
-            get
-            {
-                return mValue;
-            }
-            set
-            {
-                mValue = value;
-                OnPropertyChanged("Value");
-            }
-        }
-        #endregion Value
-
-    }
+ 
 }

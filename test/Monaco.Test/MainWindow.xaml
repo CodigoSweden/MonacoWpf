@@ -13,7 +13,8 @@
         </Grid.RowDefinitions>
         <Menu IsMainMenu="True"  VerticalAlignment="Stretch">
             
-            <MenuItem Header="CSharp"  Click="CSharp_Click" />
+            <MenuItem Header="CSharp Func"  Click="CSharpFunc_Click" />
+            <MenuItem Header="CSharp Class"  Click="CSharpClass_Click" />
             <MenuItem Header="Typescript" Click="Typescript_Click" />
             <MenuItem Header="Json" Click="Json_Click" />
         </Menu>

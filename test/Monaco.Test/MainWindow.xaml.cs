@@ -36,14 +36,21 @@ namespace monacotest
         {
             InitializeComponent();
 
-            Content.Children.Add(new CsharpUserControl());
+            Content.Children.Add(new CsharpFuncUserControl());
         }
 
-        private void CSharp_Click(object sender, RoutedEventArgs e)
+        private void CSharpFunc_Click(object sender, RoutedEventArgs e)
         {
             Content.Children.Clear();
-            Content.Children.Add(new CsharpUserControl());
+            Content.Children.Add(new CsharpFuncUserControl());
         }
+
+        private void CSharpClass_Click(object sender, RoutedEventArgs e)
+        {
+            Content.Children.Clear();
+            Content.Children.Add(new CsharpClassUserControl());
+        }
+
 
         private void Json_Click(object sender, RoutedEventArgs e)
         {

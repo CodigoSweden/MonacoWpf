@@ -45,7 +45,7 @@ namespace Monaco.Wpf.CSharp
 
             Id = Guid.NewGuid();
             Types = types;
-            (_template, _starLine) = GetTemplate();
+            
 
             Workspace = new AdhocWorkspace();
             Project = Workspace.AddProject("temp", LanguageNames.CSharp)
@@ -62,6 +62,7 @@ namespace Monaco.Wpf.CSharp
 
         public Document WithText(string code, bool withTemplate = true)
         {
+            (_template, _starLine) = GetTemplate();
             code = withTemplate ? string.Format(_template, code) : code;
             SourceText = SourceText.From(code);
             Document = Document.WithText(SourceText);
@@ -133,7 +134,7 @@ public class DynamicScript
     public class CSharpClassContext : CSharpContext
     {
         string _helpers;
-        public CSharpClassContext(List<Argument> arguments,
+        public CSharpClassContext(
             string helpers,
             List<string> usings,
             List<string> types,
