@@ -51,5 +51,6 @@ namespace Monaco.Wpf
         public void setValue(string value) => _browser.InvokeScript("editorSetValue", value);
 
         public void registerCSharpsServices(Guid id) => _browser.InvokeScript("registerCSharpsServices", id.ToString());
+        public void registerJsonSchema(string schema) => _browser.InvokeScript("registerJsonSchema", schema);
     }
 }

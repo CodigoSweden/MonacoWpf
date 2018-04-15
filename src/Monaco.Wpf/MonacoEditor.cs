@@ -119,6 +119,19 @@ namespace Monaco.Wpf
             _browser.Navigate(EmbeddedHttpServer.EditorUri);
         }
 
+        public void RegisterJsonSchema(string schema)
+        {
+
+            if (_isInitialized)
+            {
+                _monaco.registerJsonSchema(schema);
+            }
+            else
+            {
+                _afterInits.Add(() => _monaco.registerJsonSchema(schema));
+            }
+        }
+
         List<IRequestHandler> _handlers = new List<IRequestHandler>();
         List<Action> _afterInits = new List<Action>();
         public void RegisterCSharpServices(Guid id, IRequestHandler handler)

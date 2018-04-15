@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,12 +24,13 @@ namespace monacotest.Examples
         public JsonUserControl()
         {
             InitializeComponent();
-
+            var schema = new WebClient().DownloadString("https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json");
             editor.OnEditorInitialized += (o, e) =>
             {
               
                 var langs = editor.GetEditorLanguages();
                 editor.SetLanguage("json");
+                editor.RegisterJsonSchema(schema);
             };
             var vm = new ViewModel { Value = @"{
   ""compilerOptions"": {

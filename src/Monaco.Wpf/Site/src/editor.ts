@@ -165,3 +165,20 @@ class CSharpContext{
     static IsRegisterered: boolean = false;
     static ContextId: string = "";
 }
+
+function registerJsonSchema(schema: string) {
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        allowComments: true,
+        validate: true,
+        schemas: [{
+            uri: "",
+            fileMatch: ['foo.json'],
+            schema: JSON.parse(schema)
+        }]
+    });
+
+    var model = monaco.editor.createModel("", "json", monaco.Uri.parse("internal://server/foo.json"));
+
+    document.editor.setModel(model);
+    
+}
