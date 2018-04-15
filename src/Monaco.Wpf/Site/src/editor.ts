@@ -131,29 +131,37 @@ function editorSetLang(lang: string) {
         lang);
 }
 function registerCSharpsServices(id: string) {
-    monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider(id));
-    monaco.languages.registerDocumentFormattingEditProvider('csharp', new CsharpDocumentFormattingEditProvider(id));
-    // monaco.languages.registerDocumentHighlightProvider
-    // monaco.languages.registerDocumentSymbolProvider
-    monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider(id));
-    // monaco.languages.registerOnTypeFormattingEditProvider
-    // monaco.languages.registerSignatureHelpProvider
+    if (!CSharpContext.IsRegisterered) {
+        monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
+        monaco.languages.registerDocumentFormattingEditProvider('csharp', new CsharpDocumentFormattingEditProvider());
+        // monaco.languages.registerDocumentHighlightProvider
+        // monaco.languages.registerDocumentSymbolProvider
+        monaco.languages.registerHoverProvider('csharp', new CsharpHoverProvider());
+        // monaco.languages.registerOnTypeFormattingEditProvider
+        // monaco.languages.registerSignatureHelpProvider
 
 
-    document.editor.onDidChangeModelContent(function () {
+        document.editor.onDidChangeModelContent(function () {
 
-        var diagnostics = RestClient.GetDiagnostics(id, document.editor.getModel())
-            .then(x => {
-                console.log(x);
-                monaco.editor.setModelMarkers(document.editor.getModel(), 'csharp', x.map(marker => {
-                    marker.severity = monaco.Severity.Error;
-                    return marker;
-                }));
-            });
-    });
+            var diagnostics = RestClient.GetDiagnostics( document.editor.getModel())
+                .then(x => {
+                    console.log(x);
+                    monaco.editor.setModelMarkers(document.editor.getModel(), 'csharp', x.map(marker => {
+                        marker.severity = monaco.Severity.Error;
+                        return marker;
+                    }));
+                });
+        });
 
+        CSharpContext.ContextId = id;
+        CSharpContext.IsRegisterered = true;
+    }
 
     
     
 }
 
+class CSharpContext{
+    static IsRegisterered: boolean = false;
+    static ContextId: string = "";
+}

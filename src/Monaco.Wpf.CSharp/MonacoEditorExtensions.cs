@@ -14,6 +14,10 @@ namespace Monaco.Wpf
         {
             editor.RegisterCSharpServices(cSharpCtx.Id, new RoslynHandler(cSharpCtx));
         }
+        public static void RemoveCSharpLanguageService(this MonacoEditor editor, CSharpContext cSharpCtx)
+        {
+            editor.RemoveCSharpServices(cSharpCtx.Id, new RoslynHandler(cSharpCtx));
+        }
 
         public static bool Like(this string str, string wildcard)
         {

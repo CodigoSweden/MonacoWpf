@@ -2,9 +2,8 @@
 // Csharp language services...
 class CsharpCompletionProvider implements monaco.languages.CompletionItemProvider {
 
-    _id: string;
-    constructor(id: string) {
-        this._id = id;
+    constructor() {
+        
     }
     triggerCharacters?: string[] = [' ', '.'];
     provideCompletionItems(
@@ -17,7 +16,7 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
         monaco.Thenable<monaco.languages.CompletionList> {
         //return [{ label: "test" }] as monaco.languages.CompletionItem[];
 
-        return RestClient.ProvideCompletionItems(this._id,model, position);
+        return RestClient.ProvideCompletionItems(CSharpContext.ContextId,model, position);
   
     }
     //resolveCompletionItem?(item: monaco.languages.CompletionItem, token: monaco.CancellationToken): monaco.languages.CompletionItem | monaco.Thenable<monaco.languages.CompletionItem> {
@@ -28,29 +27,26 @@ class CsharpCompletionProvider implements monaco.languages.CompletionItemProvide
 
 
 class CsharpDocumentFormattingEditProvider implements monaco.languages.DocumentFormattingEditProvider {
-    _id: string;
-    constructor(id: string) {
-        this._id = id;
+    constructor() {
+        
     }
     provideDocumentFormattingEdits(model: monaco.editor.IReadOnlyModel, options: monaco.languages.FormattingOptions, token: monaco.CancellationToken): monaco.languages.TextEdit[] | monaco.Thenable<monaco.languages.TextEdit[]> {
-        return RestClient.FormatDocument(this._id,model);
+        return RestClient.FormatDocument(CSharpContext.ContextId,model);
     }
 }
 class CsharpHoverProvider implements monaco.languages.HoverProvider {
-   _id: string;
-    constructor(id: string) {
-        this._id = id;
+    constructor() {
     }
     provideHover(model: monaco.editor.IReadOnlyModel, position: monaco.Position, token: monaco.CancellationToken): monaco.languages.Hover | monaco.Thenable<monaco.languages.Hover> {
-        return RestClient.ProvideHover(this._id, model, position);
+        return RestClient.ProvideHover(CSharpContext.ContextId, model, position);
     }
 }
 class RestClient {
 
-    public static GetDiagnostics(id: string, model: monaco.editor.IReadOnlyModel): Promise<monaco.editor.IMarkerData[]> {
+    public static GetDiagnostics(model: monaco.editor.IReadOnlyModel): Promise<monaco.editor.IMarkerData[]> {
         var args = {} as any;
         args["value"] = JSON.stringify(model.getValue());
-        return RestClient.PostServer<monaco.editor.IMarkerData[]>("GetDiagnostics", JSON.stringify(args), id);
+        return RestClient.PostServer<monaco.editor.IMarkerData[]>("GetDiagnostics", JSON.stringify(args), CSharpContext.ContextId);
     }
     public static FormatDocument(id: string, model: monaco.editor.IReadOnlyModel): Promise<monaco.languages.TextEdit[]> {
         var args = {} as any;

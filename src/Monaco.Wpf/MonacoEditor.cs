@@ -134,6 +134,11 @@ namespace Monaco.Wpf
                 _afterInits.Add(() => _monaco.registerCSharpsServices(id));
             }
         }
+        public void RemoveCSharpServices(Guid id, IRequestHandler handler)
+        {
+            _handlers.Remove(handler);
+            EmbeddedHttpServer.RemoveHandler(handler);
+        }
         private string _lang = "plaintext";
         public void SetLanguage(string id)
         {

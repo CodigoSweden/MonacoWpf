@@ -28,6 +28,10 @@ namespace Monaco.Wpf
         {
             _singelton._handlers.Add(handler);
         }
+        public static void RemoveHandler(IRequestHandler handler)
+        {
+            _singelton._handlers.Remove(handler);
+        }
         public static void RemoveHandlers(List<IRequestHandler> handlers)
         {
             foreach (var item in handlers)
