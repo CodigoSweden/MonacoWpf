@@ -55,7 +55,7 @@ namespace Monaco.Wpf
 
         WebBrowser _browser;
         MonacoIntegration _monaco;
-        
+        private bool _isDisposed = false;
         bool _isInitialized;
 
         public MonacoEditor()
@@ -80,6 +80,9 @@ namespace Monaco.Wpf
                 },
                 onInitDone: () =>
                 {
+                    if (_isDisposed)
+                        return;
+
                     _isInitialized = true;
                     foreach (var a in _afterInits)
                     {
@@ -96,12 +99,14 @@ namespace Monaco.Wpf
 
                 });
             _browser.ObjectForScripting = _monaco;
-            
-           
-            this.Unloaded += (o, e) =>
+
+            this.Loaded += (o, e) =>
             {
 
-
+            };
+            this.Unloaded += (o, e) =>
+            {
+                _isDisposed = true;
                 _browser.Dispose();
             };
 
@@ -122,7 +127,7 @@ namespace Monaco.Wpf
         public void RegisterJsonSchema(string schema)
         {
 
-            if (_isInitialized)
+            if (_isInitialized && !_isDisposed)
             {
                 _monaco.registerJsonSchema(schema);
             }
@@ -138,7 +143,7 @@ namespace Monaco.Wpf
         {
             _handlers.Add(handler);
             EmbeddedHttpServer.AddHandler(handler);
-            if (_isInitialized)
+            if (_isInitialized && !_isDisposed)
             {
                 _monaco.registerCSharpsServices(id);
             }
@@ -156,7 +161,7 @@ namespace Monaco.Wpf
         public void SetLanguage(string id)
         {
             _lang = id;
-            if (_isInitialized)
+            if (_isInitialized && !_isDisposed)
             {
                 _browser.InvokeScript("editorSetLang", id);
             }
@@ -167,7 +172,10 @@ namespace Monaco.Wpf
         }
         public List<EditorLanguage> GetEditorLanguages()
         {
-            if (_isInitialized)
+            if (_isDisposed)
+                return null;
+
+            if (_isInitialized && !_isDisposed)
             {
                 var langs = _monaco.editorGetLanguages();
 

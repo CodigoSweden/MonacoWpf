@@ -29,10 +29,11 @@ namespace monacotest.Examples
         {
             InitializeComponent();
 
-            editor.OnEditorInitialized += (o, e) =>
+            editor.OnEditorInitialized += async (o, e) =>
             {
                 var ctx = new CSharpClassContext(
-              
+              name: "C",
+              staticClass: true,
                 helpers: @"
 public const int MagicNbr = 42;
                 ",
@@ -51,6 +52,7 @@ public const int MagicNbr = 42;
                 }
                 );
 
+                await Task.Delay(5_000);
                 editor.AddCSharpLanguageService(ctx);
                 var langs = editor.GetEditorLanguages();
                 editor.SetLanguage("csharp");

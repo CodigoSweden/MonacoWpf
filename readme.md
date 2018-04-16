@@ -28,3 +28,12 @@ From command line
 - add typescript definitions
 - Func to filter intelisense list
 - Kan man få till någon bra template sak..
+- Kompilera skripten och returnera func m.m
+- Async skripts
+
+
+## Buggar
+- Fel rad ibland
+- Remove handler i destructor och då man byter context..
+- Ifall man väljer ett skript, går till en annan tab och tillbaka så syns inte skriptet längre…
+

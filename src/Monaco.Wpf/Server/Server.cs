@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Threading;
+using System.Windows;
 
 namespace Monaco.Wpf
 {
@@ -58,6 +59,7 @@ namespace Monaco.Wpf
             
             _serverThread = new Thread(this.Listen);
             _serverThread.Start();
+            Application.Current.Exit += (o, e) => { Stop(); };
         }
         public void Stop()
         {

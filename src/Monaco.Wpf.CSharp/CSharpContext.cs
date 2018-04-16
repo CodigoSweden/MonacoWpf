@@ -133,13 +133,19 @@ public class DynamicScript
 
     public class CSharpClassContext : CSharpContext
     {
+        string _name;
+        bool _staticClass;
         string _helpers;
         public CSharpClassContext(
+            string name,
+            bool staticClass,
             string helpers,
             List<string> usings,
             List<string> types,
             List<MetadataReference> references): base(usings,types,references)
         {
+            _name = name;
+            _staticClass = staticClass;
             _helpers = helpers;
         }
 
@@ -150,7 +156,7 @@ public class DynamicScript
             var code = $@"
 {string.Join("\r\n", _usings.Select(x => $"using {x};"))}
 
-public class GlobalScripts
+public {(_staticClass ? "static": "")} class  {_name}
 {{{{
     // Class Code goes here
 {{0}}
