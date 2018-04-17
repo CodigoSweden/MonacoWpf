@@ -140,10 +140,8 @@ function registerCSharpsServices(id: string) {
         // monaco.languages.registerOnTypeFormattingEditProvider
         // monaco.languages.registerSignatureHelpProvider
 
-
-        document.editor.onDidChangeModelContent(function () {
-
-            var diagnostics = RestClient.GetDiagnostics( document.editor.getModel())
+        const check = () => {
+            var diagnostics = RestClient.GetDiagnostics(document.editor.getModel())
                 .then(x => {
                     console.log(x);
                     monaco.editor.setModelMarkers(document.editor.getModel(), 'csharp', x.map(marker => {
@@ -151,10 +149,14 @@ function registerCSharpsServices(id: string) {
                         return marker;
                     }));
                 });
-        });
+        };
+
+        document.editor.onDidChangeModelContent(check);
 
         CSharpContext.ContextId = id;
         CSharpContext.IsRegisterered = true;
+
+        check();
     }
 
     

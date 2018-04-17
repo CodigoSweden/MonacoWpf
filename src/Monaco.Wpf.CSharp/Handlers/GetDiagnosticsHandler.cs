@@ -30,10 +30,10 @@ namespace Monaco.Wpf.CSharp
                 {
                     message = x.GetMessage(),
                     severity = Severity.Error,
-                    startLineNumber =ls.StartLinePosition.Line -context.StartLine,
-                    startColumn = ls.StartLinePosition.Character,
-                    endLineNumber = ls.EndLinePosition.Line - context.StartLine,
-                    endColumn = ls.EndLinePosition.Character
+                    startLineNumber =ls.StartLinePosition.Line -context.StartLine + 1,
+                    startColumn = ls.StartLinePosition.Character + 1,
+                    endLineNumber = ls.EndLinePosition.Line - context.StartLine +1,
+                    endColumn = ls.EndLinePosition.Character + 1
 
 
                 };

@@ -51,8 +51,7 @@ public const int MagicNbr = 42;
 
                 }
                 );
-
-                await Task.Delay(5_000);
+                
                 editor.AddCSharpLanguageService(ctx);
                 var langs = editor.GetEditorLanguages();
                 editor.SetLanguage("csharp");
