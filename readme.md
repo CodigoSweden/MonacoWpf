@@ -30,7 +30,8 @@ From command line
 - Kan man få till någon bra template sak..
 - Kompilera skripten och returnera func m.m
 - Async skripts
-
+- Diff fönster i test appen där man kan välja två filer..
+- kan man återanvända browser objecten? isånna fall skapa en browserpool
 
 ## Buggar
 - Fel rad ibland

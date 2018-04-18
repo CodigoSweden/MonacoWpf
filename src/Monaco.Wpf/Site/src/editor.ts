@@ -131,6 +131,7 @@ function editorSetLang(lang: string) {
         lang);
 }
 function registerCSharpsServices(id: string) {
+    CSharpContext.ContextId = id;
     if (!CSharpContext.IsRegisterered) {
         monaco.languages.registerCompletionItemProvider('csharp', new CsharpCompletionProvider());
         monaco.languages.registerDocumentFormattingEditProvider('csharp', new CsharpDocumentFormattingEditProvider());
@@ -153,7 +154,6 @@ function registerCSharpsServices(id: string) {
 
         document.editor.onDidChangeModelContent(check);
 
-        CSharpContext.ContextId = id;
         CSharpContext.IsRegisterered = true;
 
         check();
