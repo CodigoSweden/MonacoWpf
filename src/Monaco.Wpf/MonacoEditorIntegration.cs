@@ -52,5 +52,9 @@ namespace Monaco.Wpf
 
         public void registerCSharpsServices(Guid id) => _browser.InvokeScript("registerCSharpsServices", id.ToString());
         public void registerJsonSchema(string schema) => _browser.InvokeScript("registerJsonSchema", schema);
+
+        public void setDiffContent(string left,string right, string lang) => _browser.InvokeScript("setDiffContent", left,right,lang);
+
+        
     }
 }

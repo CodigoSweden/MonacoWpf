@@ -29,7 +29,8 @@ namespace Monaco.Wpf
             _monaco = new MonacoIntegration(
                 browser: _browser,
                 onValueChanged: value => { },
-                log: (s,m) => { }
+                log: (s,m) => { },
+                onInitDone: () => { }
                 );
             _browser.ObjectForScripting = _monaco;
             _browser.Navigated += async (o, e) =>
@@ -45,5 +46,14 @@ namespace Monaco.Wpf
 
         }
         
+
+        public void SetContent(string left,string right)
+        {
+            if (_isInitialized)
+            {
+                _monaco.setDiffContent(left, right, "plaintext");
+            }
+        }
+
     }
 }

@@ -63,6 +63,11 @@ namespace monacotest
             Content.Children.Clear();
             Content.Children.Add(new TypescriptUserControl());
         }
+        private void Diff_Click(object sender, RoutedEventArgs e)
+        {
+            Content.Children.Clear();
+            Content.Children.Add(new DiffUserControl());
+        }
     }
 
   

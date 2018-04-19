@@ -17,6 +17,7 @@
             <MenuItem Header="CSharp Class"  Click="CSharpClass_Click" />
             <MenuItem Header="Typescript" Click="Typescript_Click" />
             <MenuItem Header="Json" Click="Json_Click" />
+            <MenuItem Header="Diff" Click="Diff_Click" />
         </Menu>
 
         <Grid Name="Content" Grid.Row="1" DockPanel.Dock="Bottom">

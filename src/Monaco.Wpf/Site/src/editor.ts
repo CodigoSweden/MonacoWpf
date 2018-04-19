@@ -3,6 +3,7 @@
 
 interface Document {
     editor: monaco.editor.IStandaloneCodeEditor;
+    diffEditor: monaco.editor.IStandaloneDiffEditor;
 }
 
 interface External {
@@ -21,8 +22,8 @@ declare function require(...args: any[]): any;
 function InitDiffEditor() {
     // Create the Editor Instance
     require(['vs/editor/editor.main'], function () {
-        var originalModel = monaco.editor.createModel("This line is removed on the right.\njust some text\nabcd\nefgh\nSome more text", "csharp");
-        var modifiedModel = monaco.editor.createModel("just some text\nabcz\nzzzzefgh\nSome more text.\nThis line is removed on the left.", "csharp");
+        var originalModel = monaco.editor.createModel("", "plaintext");
+        var modifiedModel = monaco.editor.createModel("", "plaintext");
 
         var diffEditor = monaco.editor.createDiffEditor(document.getElementById("container"), {
             // You can optionally disable the resizing
@@ -38,6 +39,8 @@ function InitDiffEditor() {
         window.onresize = () => {
             diffEditor.layout({ width: window.external.getWidth(), height: window.external.getHeight() });
         };
+        document.diffEditor = diffEditor;
+        window.external.onInitDone();
     });
 }
 
@@ -183,4 +186,14 @@ function registerJsonSchema(schema: string) {
 
     document.editor.setModel(model);
     
+}
+
+function setDiffContent(left: string, right: string, lang: string) {
+    var originalModel = monaco.editor.createModel(left, lang);
+    var modifiedModel = monaco.editor.createModel(right, lang);
+
+    document.diffEditor.setModel({
+        original: originalModel,
+        modified: modifiedModel
+    });
 }
