@@ -28,7 +28,7 @@ From command line
 - add typescript definitions
 - Func to filter intelisense list
 - Kan man få till någon bra template sak..
-- Kompilera skripten och returnera func m.m
+- Kompilera skripten och returnera func m.m, bryt ut en dll för själva kompileringen som ersätter komon scripts för att få samma källa.. hur funkar det med reference assemblies.. Kan iaf vara bra att ha till pptx
 - Async skripts
 - Diff fönster i test appen där man kan välja två filer..
 - kan man återanvända browser objecten? isånna fall skapa en browserpool

@@ -27,35 +27,52 @@ namespace monacotest.Examples
             var schema = new WebClient().DownloadString("https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json");
             editor.OnEditorInitialized += (o, e) =>
             {
-              
+
+                var schem2a = NJsonSchema.JsonSchema4.FromTypeAsync(typeof(List<DisplayTypeConfig>)).Result;
+                var schemaData = schem2a.ToJson();
+               
                 var langs = editor.GetEditorLanguages();
                 editor.SetLanguage("json");
-                editor.RegisterJsonSchema(schema);
+                // editor.RegisterJsonSchema(schema);
+                editor.RegisterJsonSchema(schemaData);
             };
-            var vm = new ViewModel { Value = @"{
-  ""compilerOptions"": {
+            var vm = new ViewModel
+            {
+                Value = ""
 
-    ""noImplicitAny"": false,
-    ""noEmitOnError"": true,
-    ""removeComments"": false,
-    
-    ""module"": ""none"",
-    ""moduleResolution"": ""classic"",
+                //                Value = @"{
+                //  ""compilerOptions"": {
 
-    ""target"": ""es5"",
-    ""lib"": [ ""es6"", ""dom""],
-    ""sourceMap"": false,
-    
-    ""outFile"": ""Site/Out/editor.js""
-  },
-  ""include"": [ ""Site/Src/**/*.ts"" ],
-  ""exclude"": [
-    ""node_modules"",
-    ""wwwroot""
-  ]
-}
-" };
+                //    ""noImplicitAny"": false,
+                //    ""noEmitOnError"": true,
+                //    ""removeComments"": false,
+
+                //    ""module"": ""none"",
+                //    ""moduleResolution"": ""classic"",
+
+                //    ""target"": ""es5"",
+                //    ""lib"": [ ""es6"", ""dom""],
+                //    ""sourceMap"": false,
+
+                //    ""outFile"": ""Site/Out/editor.js""
+                //  },
+                //  ""include"": [ ""Site/Src/**/*.ts"" ],
+                //  ""exclude"": [
+                //    ""node_modules"",
+                //    ""wwwroot""
+                //  ]
+                //}
+                //" 
+            };
+
             DataContext = vm;
         }
+    }
+
+    public partial class DisplayTypeConfig
+    {
+        public string Device { get; set; }
+        public string Type { get; set; }
+        public Dictionary<string, string> Custom { get; set; }
     }
 }

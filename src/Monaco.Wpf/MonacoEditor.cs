@@ -123,7 +123,7 @@ namespace Monaco.Wpf
 
             _browser.Navigate(EmbeddedHttpServer.EditorUri);
         }
-
+        
         public void RegisterJsonSchema(string schema)
         {
 
